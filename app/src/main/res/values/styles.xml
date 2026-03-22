@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="loginActivity_textView_info">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/color_dark_g</item>
+    </style>
+
+    <style name="loginActivity_textView_sign">
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:text">회원가입</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="loginActivity_editText_info">
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:backgroundTint">#ffffff</item>
+    </style>
+
+
+
+
+
+    <!-- 글자 크기 관련 -->
+
+    <style name="top_menu_title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="sign_title">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/color_dark_g</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="add_day_btn">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/theme_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="medicine_day">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/theme_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="medicine_meal">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="medicine_meal_n">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/theme_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- 레이아웃 -->
+    <style name="main_layout">
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingRight">30dp</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:background">@color/base_background</item>
+    </style>
+
+
+    <style name="add_btn">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:background">#1A000000</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
+</resources>

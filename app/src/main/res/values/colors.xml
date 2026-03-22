@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#1CA673</color>
+    <color name="purple_500">#1CA673</color>
+    <color name="purple_700">#1CA673</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="theme_color">#1CA673</color>
+    <color name="color_y">#F29B30</color>
+    <color name="color_r">#D92B2B</color>
+    <color name="color_w">#f2f2f2</color>
+    <color name="color_dark_g">#014029</color>
+    <color name="color_gray">#808080</color>
+
+    <!-- 회색 -->
+    <color name="color_gray0">#f8f9fa</color>
+    <color name="color_gray1">#f1f3f5</color>
+    <color name="color_gray2">#e9ecef</color>
+    <color name="color_gray3">#dee2e6</color>
+    <color name="color_gray4">#ced4da</color>
+    <color name="color_gray5">#adb5bd</color>
+    <color name="color_gray6">#868e96</color>
+    <color name="color_gray7">#495057</color>
+    <color name="color_gray8">#343a40</color>
+    <color name="color_gray9">#212529</color>
+
+    <color name="login_background">#515ACE8A</color>
+    <color name="top_color">#1CA673</color>
+    <color name="base_background">#F4F5F6</color>
+
+    <color name="transparent">#00000000</color>
+
+</resources>

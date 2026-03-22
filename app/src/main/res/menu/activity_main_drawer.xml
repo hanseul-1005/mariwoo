@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_medicine_list"
+            android:title="@string/menu_medicine_list"/>
+
+        <item
+            android:id="@+id/nav_medicine_intake_list"
+            android:title="@string/menu_medicine_intake"/>
+        <item
+            android:id="@+id/nav_relation_list"
+            android:title="@string/menu_relation_list"/>
+        <item
+            android:id="@+id/nav_relation_intake_list"
+            android:title="@string/menu_relation_intake"/>
+        <item
+            android:id="@+id/nav_change_name"
+            android:title="@string/menu_change_name"/>
+
+        <item
+            android:id="@+id/nav_change_pw"
+            android:title="@string/menu_change_pw"/>
+
+        <item
+            android:id="@+id/nav_tos_list"
+            android:title="@string/menu_tos_list"/>
+
+    </group>
+</menu>
