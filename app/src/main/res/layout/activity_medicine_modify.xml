@@ -88,19 +88,22 @@
                     android:background="@drawable/layout_border_radius5"
                     android:layout_marginTop="5dp">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/medicineModifyActivity_editText_id"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        style="@style/loginActivity_editText_info"
-                        android:hint="약이름을 입력하세요"
+                        style="@style/medicine_day"
+                        android:background="@color/base_background"
+                        android:gravity="left|center"
+                        android:paddingLeft="5dp"
                         android:text="고혈압 약"/>
 
                 </LinearLayout>
-
+git
             </LinearLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/signActivity_layout_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

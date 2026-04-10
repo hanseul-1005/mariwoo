@@ -49,8 +49,8 @@ public class RelationListFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private String userNo = "";
-    private String type = "열람자 ";
     private String serverUrl = "";
+    private String type = "열람자 ";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
