@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        serverUrl = getString(R.string.server_url);
+        serverUrl = getString(R.string.server_user);
 
         sharedPreferences = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userId = sharedPreferences.getString("user_id", "");

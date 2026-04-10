@@ -81,7 +81,7 @@
                         android:layout_marginTop="5dp">
 
                         <EditText
-                            android:id="@+id/loginActivity_editText_id"
+                            android:id="@+id/signActivity_editText_id"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
@@ -118,7 +118,7 @@
                         android:layout_marginTop="5dp">
 
                         <EditText
-                            android:id="@+id/loginActivity_editText_pw"
+                            android:id="@+id/signActivity_editText_pw"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
@@ -146,6 +146,7 @@
                         style="@style/sign_title"/>
 
                     <LinearLayout
+                        android:id="@+id/signActivity_layout_pw_check"
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:background="@drawable/layout_border_radius5"
@@ -155,7 +156,7 @@
                         android:layout_marginTop="5dp">
 
                         <EditText
-                            android:id="@+id/loginActivity_editText_chk_pw"
+                            android:id="@+id/signActivity_editText_chk_pw"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
@@ -163,6 +164,16 @@
                             android:hint="비밀번호를 한 번 더 입력하세요"/>
 
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/signActivity_textView_check"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_pw_check"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:text=""
+                        style="@style/loginActivity_editText_info"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 
@@ -192,7 +203,7 @@
                         android:layout_marginTop="5dp">
 
                         <EditText
-                            android:id="@+id/loginActivity_editText_phone"
+                            android:id="@+id/signActivity_editText_tel"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@null"
@@ -235,7 +246,7 @@
                             android:layout_weight="0.8">
 
                             <EditText
-                                android:id="@+id/loginActivity_editText_email"
+                                android:id="@+id/signActivity_editText_email"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -258,7 +269,7 @@
                             android:layout_weight="1.2">
 
                             <EditText
-                                android:id="@+id/loginActivity_editText_emailAddr"
+                                android:id="@+id/signActivity_editText_emailAddr"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -303,7 +314,7 @@
                             android:layout_weight="1.4">
 
                             <EditText
-                                android:id="@+id/loginActivity_editText_birth_year"
+                                android:id="@+id/signActivity_editText_birth_year"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -327,7 +338,7 @@
                             android:layout_weight="0.8">
 
                             <EditText
-                                android:id="@+id/loginActivity_editText_birth_month"
+                                android:id="@+id/signActivity_editText_birth_month"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -351,7 +362,7 @@
                             android:layout_weight="0.8">
 
                             <EditText
-                                android:id="@+id/loginActivity_editText_birth_day"
+                                android:id="@+id/signActivity_editText_birth_day"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:background="@null"
@@ -459,7 +470,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/loginActivity_button_login"
+                android:id="@+id/signActivity_button_sign"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="회원가입"
