@@ -1,4 +1,4 @@
-package com.windy.mariwoo.basic;
+package com.windy.mariwoo.basic.user;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,19 +6,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.windy.mariwoo.R;
-import com.windy.mariwoo.basic.user.SignActivity;
+import com.windy.mariwoo.basic.LoginActivity;
+import com.windy.mariwoo.basic.MainActivity;
 
 import org.json.JSONObject;
 
@@ -32,80 +32,56 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class ChangePwActivity extends AppCompatActivity {
 
-    private EditText editId;
-    private EditText editPw;
-    private AppCompatButton btnLogin;
-    private AppCompatButton btnSign;
 
-    private SharedPreferences sharedPreferences;
-    private String userId = "";
-    private String userPw = "";
     private String serverUrl = "";
+    private SharedPreferences sharedPreferences;
+    private String userNo = "";
+
+    private EditText editPw;
+    private EditText editPwCheck;
+    private Button btnChange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_change_pw);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
         serverUrl = getString(R.string.server_user);
 
         sharedPreferences = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
-        userId = sharedPreferences.getString("user_id", "");
-        userPw = sharedPreferences.getString("user_pw", "");
+        userNo = sharedPreferences.getString("user_no", "-1");
 
-        editId = findViewById(R.id.loginActivity_editText_id);
-        editPw = findViewById(R.id.loginActivity_editText_pw);
+        editPw = findViewById(R.id.changePwActivity_editText_pw);
+        editPwCheck = findViewById(R.id.changePwActivity_editText_chk_pw);
 
-        if(!"".equals(userId) && !"".equals(userPw)) {
-            login();
-        }
-
-        btnSign = findViewById(R.id.loginActivity_button_sign);
-        btnSign.setOnClickListener(new View.OnClickListener() {
+        btnChange = findViewById(R.id.changePwActivity_button_change);
+        btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignActivity.class);
-                startActivity(intent);
+
             }
         });
 
-        btnLogin = findViewById(R.id.loginActivity_button_login);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userId = editId.getText().toString().trim();
-                userPw = editPw.getText().toString().trim();
-
-                //login();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-
-                finish();
-            }
-        });
     }
 
-    private void login() {
-        Log.i("HS LoginActivity", "login start");
+    private void changePw() {
+        Log.i("HS ChangePwActivity", "change pw start");
 
-
+        String pw = editPw.getText().toString();
 
         // POST 파라미터 추가
-        RequestBody formBody = new FormBody  .Builder()
+        RequestBody formBody = new FormBody.Builder()
                 .add("cmd", "login")
-                .add("id", userId)
-                .add("pw", userPw)
+                .add("userNo", userNo)
+                .add("pw", pw)
                 .build();
 
         // 요청 만들기
@@ -140,26 +116,15 @@ public class LoginActivity extends AppCompatActivity {
                             String result = json.getString("result");
 
                             if("true".equals(result)) {
-                                String userNo = json.getString("userNo");
-                                String userName = json.getString("userName");
-
-                                Log.i("HS LoginActivity", "userNo : "+userNo);
-                                Log.i("HS LoginActivity", "userName : "+userName);
-
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("user_no", userNo);
-                                editor.putString("user_id", userId);
-                                editor.putString("user_pw", userPw);
-                                editor.putString("user_name", userName);
+                                editor.putString("user_pw", pw);
 
                                 editor.apply();
 
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-
-                                finish();
+                                Toast.makeText(getApplicationContext(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getApplicationContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {

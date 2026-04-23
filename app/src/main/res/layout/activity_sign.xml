@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".basic.SignActivity">
+    tools:context=".basic.user.SignActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -46,7 +46,9 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/signActivity_layout_top"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:padding="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="15dp"
             android:background="@color/base_background">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/loginActivity_button_login">
+                app:layout_constraintBottom_toTopOf="@+id/signActivity_button_sign">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/signActivity_layout_id"
@@ -72,21 +74,44 @@
                         style="@style/sign_title"/>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:background="@drawable/layout_border_radius5"
-                        app:layout_constraintTop_toBottomOf="@+id/signActivity_textView_id"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
+                        android:weightSum="1.5"
                         android:layout_marginTop="5dp">
 
-                        <EditText
-                            android:id="@+id/signActivity_editText_id"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@null"
-                            style="@style/loginActivity_editText_info"
-                            android:hint="아이디를 입력하세요"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/layout_border_radius5">
+
+                            <EditText
+                                android:id="@+id/signActivity_editText_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@null"
+                                style="@style/loginActivity_editText_info"
+                                android:hint="아이디를 입력하세요"/>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="0.1"/>
+
+                        <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/signActivity_button_idCheck"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.4"
+                                android:text="중복확인"
+                                android:textColor="@color/white"
+                                android:textSize="15dp"
+                                android:textStyle="bold"
+                                android:background="@drawable/button_radius15_bg_theme"
+                                app:layout_constraintBottom_toBottomOf="parent"/>
+
 
                     </LinearLayout>
 
@@ -172,7 +197,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_pw_check"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        android:text=""
+                        android:text="비밀번호와 비밀번호 확인을 입력해주세요."
                         style="@style/loginActivity_editText_info"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -208,6 +233,8 @@
                             android:layout_height="match_parent"
                             android:background="@null"
                             style="@style/loginActivity_editText_info"
+                            android:inputType="phone"
+                            android:maxLength="13"
                             android:hint="연락처를 입력하세요"/>
 
                     </LinearLayout>
@@ -231,55 +258,86 @@
                         style="@style/sign_title"/>
 
                     <LinearLayout
+                        android:id="@+id/signActivity_layout_emailAddr"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         app:layout_constraintTop_toBottomOf="@+id/signActivity_textView_email"
                         app:layout_constraintRight_toRightOf="parent"
-                        android:layout_marginTop="5dp"
-                        android:weightSum="2.2"
-                        android:gravity="center_vertical">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="40dp"
-                            android:background="@drawable/layout_border_radius5"
-                            android:layout_weight="0.8">
+                            android:weightSum="2.2">
 
-                            <EditText
-                                android:id="@+id/signActivity_editText_email"
-                                android:layout_width="match_parent"
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:background="@null"
-                                style="@style/loginActivity_editText_info"
-                                android:hint="이메일"/>
+                                android:layout_weight="0.8">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/signActivity_textField_email"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:inputType="textEmailAddress"
+                                    android:textSize="14sp"
+                                    android:background="@drawable/layout_border_radius5"
+                                    android:paddingTop="2dp"
+                                    android:paddingBottom="2dp"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="0.2"
+                                android:text=" &#64; "
+                                android:textAlignment="center"
+                                android:gravity="center"/>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/layoutEmailDomain"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1.2">
+
+                                <AutoCompleteTextView
+                                    android:id="@+id/signActivity_textView_emailAddr"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:inputType="none"
+                                    android:textSize="14sp"
+                                    android:background="@drawable/layout_border_radius5"
+                                    android:paddingTop="2dp"
+                                    android:paddingBottom="2dp"/>
+
+                            </com.google.android.material.textfield.TextInputLayout>
 
                         </LinearLayout>
-                        
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.2"
-                            android:text=" &#64; "
-                            android:textAlignment="center"/>
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/signActivity_textInputLayout_emailAddr"
+                            android:layout_width="match_parent"
                             android:layout_height="40dp"
-                            android:background="@drawable/layout_border_radius5"
-                            android:layout_weight="1.2">
+                            android:layout_marginTop="2dp"
+                            android:visibility="gone">
 
-                            <EditText
-                                android:id="@+id/signActivity_editText_emailAddr"
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/signActivity_textInput_emailAddr"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@null"
-                                style="@style/loginActivity_editText_info"
-                                android:hint="naver.com"/>
+                                android:inputType="textEmailAddress"
+                                android:textSize="14sp"
+                                android:paddingTop="2dp"
+                                android:paddingBottom="2dp"
+                                android:background="@drawable/layout_border_radius5"/>
 
-                        </LinearLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
+
 
                     </LinearLayout>
-                    
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -298,88 +356,29 @@
                         android:text="생년월일"
                         style="@style/sign_title"/>
 
-                    <LinearLayout
+                    <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        app:layout_constraintTop_toBottomOf="@+id/signActivity_textView_birth"
-                        app:layout_constraintRight_toRightOf="parent"
-                        android:layout_marginTop="5dp"
-                        android:weightSum="4.2"
-                        android:gravity="center_vertical">
+                        app:layout_constraintTop_toBottomOf="@id/signActivity_textView_birth">
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/signActivity_editText_birth"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:inputType="none"
+                            android:textColor="@android:color/black"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:textSize="14sp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
                             android:background="@drawable/layout_border_radius5"
-                            android:layout_weight="1.4">
+                            />
 
-                            <EditText
-                                android:id="@+id/signActivity_editText_birth_year"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@null"
-                                style="@style/loginActivity_editText_info"
-                                android:hint="1994"
-                                android:textAlignment="center"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.4"
-                            android:text="년"
-                            android:textAlignment="center"/>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/layout_border_radius5"
-                            android:layout_weight="0.8">
-
-                            <EditText
-                                android:id="@+id/signActivity_editText_birth_month"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@null"
-                                style="@style/loginActivity_editText_info"
-                                android:hint="10"
-                                android:textAlignment="center"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.4"
-                            android:text="월"
-                            android:textAlignment="center"/>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/layout_border_radius5"
-                            android:layout_weight="0.8">
-
-                            <EditText
-                                android:id="@+id/signActivity_editText_birth_day"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@null"
-                                style="@style/loginActivity_editText_info"
-                                android:hint="5"
-                                android:textAlignment="center"/>
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.4"
-                            android:text="일"
-                            android:textAlignment="center"/>
-
-                    </LinearLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -416,7 +415,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_tos_use"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="2dp">
                     
                     <CheckBox
                         android:id="@+id/signActivity_checkBox_privacy"
@@ -444,7 +443,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_tos_privacy"
-                    android:layout_marginTop="5dp">
+                    android:layout_marginTop="2dp">
 
                     <CheckBox
                         android:id="@+id/signActivity_checkBox_marketing"

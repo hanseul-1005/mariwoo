@@ -180,7 +180,7 @@ public class MedicineListFragment extends Fragment {
 
         // POST 파라미터 추가
         RequestBody formBody = new FormBody.Builder()
-                .add("cmd", "login")
+                .add("cmd", "list")
                 .add("userNo", userNo)
                 .build();
 
