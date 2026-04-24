@@ -90,7 +90,7 @@ public class ChangePwActivity extends AppCompatActivity {
                 .url(serverUrl)
                 .post(formBody)
                 .build();
-        Log.i("HS LoginActivity", "request : "+request.toString());
+        Log.i("HS ChangePwActivity", "request : "+request.toString());
         // 응답 콜백
         client.newCall(request).enqueue(new Callback() {
             @Override

@@ -28,4 +28,18 @@
         android:name="com.windy.mariwoo.basic.ui.relationIntake.RelationIntakeFragment"
         android:label="@string/menu_relation_intake"
         tools:layout="@layout/fragment_relation_intake" />
+
+    <fragment
+        android:id="@+id/nav_change_info"
+        android:name="com.windy.mariwoo.basic.ui.changePw.ChangePwFragment"
+        android:label="@string/menu_change_info"
+        tools:layout="@layout/fragment_change_info" />
+
+    <fragment
+        android:id="@+id/nav_change_pw"
+        android:name="com.windy.mariwoo.basic.ui.changePw.ChangePwFragment"
+        android:label="@string/menu_change_pw"
+        tools:layout="@layout/fragment_change_pw" />
+
+
 </navigation>
