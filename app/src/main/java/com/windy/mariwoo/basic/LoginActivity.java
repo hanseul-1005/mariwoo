@@ -87,11 +87,8 @@ public class LoginActivity extends AppCompatActivity {
                 userId = editId.getText().toString().trim();
                 userPw = editPw.getText().toString().trim();
 
-                //login();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                login();
 
-                finish();
             }
         });
     }
@@ -140,8 +137,11 @@ public class LoginActivity extends AppCompatActivity {
                             String result = json.getString("result");
 
                             if("true".equals(result)) {
-                                String userNo = json.getString("userNo");
-                                String userName = json.getString("userName");
+                                String userNo = json.getString("no");
+                                String userName = json.getString("name");
+                                String userEmail = json.getString("email");
+                                String userTel = json.getString("tel");
+                                String userBirth = json.getString("birth");
 
                                 Log.i("HS LoginActivity", "userNo : "+userNo);
                                 Log.i("HS LoginActivity", "userName : "+userName);
@@ -151,6 +151,9 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("user_id", userId);
                                 editor.putString("user_pw", userPw);
                                 editor.putString("user_name", userName);
+                                editor.putString("user_email", userEmail);
+                                editor.putString("user_tel", userTel);
+                                editor.putString("user_birth", userBirth);
 
                                 editor.apply();
 

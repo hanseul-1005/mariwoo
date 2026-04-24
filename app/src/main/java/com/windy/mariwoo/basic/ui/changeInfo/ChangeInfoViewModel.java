@@ -1,4 +1,4 @@
-package com.windy.mariwoo.basic.ui.changeName;
+package com.windy.mariwoo.basic.ui.changeInfo;
 
 import androidx.lifecycle.ViewModel;
 

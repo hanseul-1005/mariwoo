@@ -1,8 +1,11 @@
 package com.windy.mariwoo.basic;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -22,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+
+    private Button btnLogOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +58,27 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
+        // 헤더에 아이템 처리
         View headerView = navigationView.getHeaderView(0);
         TextView navUserName = headerView.findViewById(R.id.navHeaderMain_textView_name);
         navUserName.setText("test");
+
+
+        Button btnLogout = headerView.findViewById(R.id.header_btn_logout);
+        btnLogout.setOnClickListener(v -> {
+            // 이벤트 처리
+            // SharedPreferences 로그인 정보 초기화
+            SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear(); // 전체 삭제
+            editor.apply();
+
+            // 로그인 화면으로 이동 (백스택 전부 제거)
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
     }
 
     /*@Override

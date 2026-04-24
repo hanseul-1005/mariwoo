@@ -1,6 +1,7 @@
 package com.windy.mariwoo.basic.user;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -64,6 +66,7 @@ public class SignActivity extends AppCompatActivity {
     private EditText editPw;
     private EditText editPwCheck;
     private TextView tvPwCheck;
+    private EditText editName;
     private EditText editTel;
     private TextInputEditText editEmail;
     private AutoCompleteTextView editAddr;
@@ -87,6 +90,7 @@ public class SignActivity extends AppCompatActivity {
 
     private String serverUrl = "";
     private boolean idCheckResult = false;
+    private boolean pwCheckResult = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,13 +111,12 @@ public class SignActivity extends AppCompatActivity {
         editPw = findViewById(R.id.signActivity_editText_pw);
         editPwCheck = findViewById(R.id.signActivity_editText_chk_pw);
         tvPwCheck = findViewById(R.id.signActivity_textView_check);
+        editName = findViewById(R.id.signActivity_editText_name);
         editTel = findViewById(R.id.signActivity_editText_tel);
         editBirth = findViewById(R.id.signActivity_editText_birth);
 
         editBirth.setOnClickListener(v -> showBirthDatePicker());
         editBirth.setTextColor(getResources().getColor(android.R.color.black));
-        String pw = editPw.getText().toString();
-        String pwCheck = editPwCheck.getText().toString();
 
         idCheck = findViewById(R.id.signActivity_button_idCheck);
         idCheck.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +126,41 @@ public class SignActivity extends AppCompatActivity {
             }
         });
 
+        String pw = editPw.getText().toString();
+        String pwCheck = editPwCheck.getText().toString();
+
+        editPw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(!pw.equals(pwCheck)) {
+                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+
+                            int textColor = ContextCompat.getColor(SignActivity.this, R.color.color_r);
+                            tvPwCheck.setTextColor(textColor);
+
+                            pwCheckResult = false;
+                        } else {
+                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                            pwCheckResult = true;
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         editPwCheck.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -136,9 +174,14 @@ public class SignActivity extends AppCompatActivity {
                     public void run() {
                         if(!pw.equals(pwCheck)) {
                             tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-                        }
-                        else {
+
+                            int textColor = ContextCompat.getColor(SignActivity.this, R.color.color_r);
+                            tvPwCheck.setTextColor(textColor);
+
+                            pwCheckResult = false;
+                        } else {
                             tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                            pwCheckResult = true;
                         }
                     }
                 });
@@ -261,48 +304,7 @@ public class SignActivity extends AppCompatActivity {
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String id = editId.getText().toString();
-                String pw = editPw.getText().toString();
-                String tel = editTel.getText().toString();
-                String email = editEmail.getText().toString();
-                String emailAddr = editAddr.getText().toString();
-                String emailAddrDirect = editAddrDirect.getText().toString();
-                String birth = editBirth.getText().toString();
-
-                if("".equals(id)) {
-                    Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(idCheckResult==false) {
-                    Toast.makeText(getApplicationContext(), "아이디 중복확인을 진행해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if("".equals(pw)) {
-                    Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if("".equals(tel)) {
-                    Toast.makeText(getApplicationContext(), "연락처를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if("".equals(email)) {
-                    Toast.makeText(getApplicationContext(), "이메일를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if ("직접입력".equals(emailAddr)) {
-                    if("".equals(emailAddrDirect)) {
-                        Toast.makeText(getApplicationContext(), "이메일 주소를 입력해주세요.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                if("".equals(birth)) {
-                    Toast.makeText(getApplicationContext(), "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                sign();
+                check();
             }
         });
     }
@@ -403,6 +405,7 @@ public class SignActivity extends AppCompatActivity {
 
         String id = editId.getText().toString();
         String pw = editPw.getText().toString();
+        String name = editName.getText().toString();
         String tel = editTel.getText().toString();
         String email = editEmail.getText().toString();
         String birth = editBirth.getText().toString();
@@ -412,6 +415,7 @@ public class SignActivity extends AppCompatActivity {
                 .add("cmd", "sign")
                 .add("id", id)
                 .add("pw", pw)
+                .add("name", name)
                 .add("tel", tel)
                 .add("email", email)
                 .add("birth", birth)
@@ -467,5 +471,55 @@ public class SignActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void check() {
+
+        String id = editId.getText().toString();
+        String pw = editPw.getText().toString();
+        String name = editName.getText().toString();
+        String tel = editTel.getText().toString();
+        String email = editEmail.getText().toString();
+        String emailAddr = editAddr.getText().toString();
+        String emailAddrDirect = editAddrDirect.getText().toString();
+        String birth = editBirth.getText().toString();
+
+        if("".equals(id)) {
+            Toast.makeText(getApplicationContext(), "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(idCheckResult==false) {
+            Toast.makeText(getApplicationContext(), "아이디 중복확인을 진행해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if("".equals(pw)) {
+            Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if("".equals(name)) {
+            Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if("".equals(tel)) {
+            Toast.makeText(getApplicationContext(), "연락처를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if("".equals(email)) {
+            Toast.makeText(getApplicationContext(), "이메일를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if ("직접입력".equals(emailAddr)) {
+            if("".equals(emailAddrDirect)) {
+                Toast.makeText(getApplicationContext(), "이메일 주소를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        if("".equals(birth)) {
+            Toast.makeText(getApplicationContext(), "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        sign();
     }
 }

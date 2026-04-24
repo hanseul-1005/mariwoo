@@ -201,12 +201,49 @@
                         style="@style/loginActivity_editText_info"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/signActivity_layout_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_chk_pw"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        android:id="@+id/signActivity_textView_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        android:text="이름"
+                        style="@style/sign_title"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/layout_border_radius5"
+                        app:layout_constraintTop_toBottomOf="@+id/signActivity_textView_name"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_marginTop="5dp">
+
+                        <EditText
+                            android:id="@+id/signActivity_editText_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@null"
+                            style="@style/loginActivity_editText_info"
+                            android:hint="이름을 입력하세요"/>
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/signActivity_layout_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_chk_pw"
+                    app:layout_constraintTop_toBottomOf="@+id/signActivity_layout_name"
                     android:layout_marginTop="5dp">
 
                     <TextView

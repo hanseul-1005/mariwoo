@@ -17,12 +17,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".basic.user.ChangePwActivity"
-            android:exported="false" />
-        <activity
-            android:name=".basic.user.ChangeInfoActivity"
-            android:exported="false" />
-        <activity
             android:name=".basic.activity.DatePickerActivity"
             android:exported="false" />
         <activity
