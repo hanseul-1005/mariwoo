@@ -17,6 +17,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".basic.activity.RelationAddActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+        <activity
             android:name=".basic.activity.DatePickerActivity"
             android:exported="false" />
         <activity

@@ -7,6 +7,7 @@ public class RelationModel {
     private String name;
     private String tel;
     private String accept;
+    private String type;
 
     private List<RelationModel> listRelation;
 
@@ -40,6 +41,14 @@ public class RelationModel {
 
     public void setAccept(String accept) {
         this.accept = accept;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public List<RelationModel> getListRelation() {
