@@ -115,8 +115,6 @@ public class RelationListFragment extends Fragment {
         // 예시 데이터 세팅
         listRelation = new ArrayList<>();
 
-        getList();
-
         RecyclerView rvOuterRecyclerView = binding.relationListFragmentRecyclerviewOuter;
 
         outerAdapter = new RelationOuterAdapter(getContext(), listRelation, new RelationOuterAdapter.OnRelationClickListener() {
@@ -154,6 +152,8 @@ public class RelationListFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        getList();
 
         return root;
     }
