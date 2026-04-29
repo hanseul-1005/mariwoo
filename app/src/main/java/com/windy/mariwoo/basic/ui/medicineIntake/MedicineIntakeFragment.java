@@ -2,7 +2,9 @@ package com.windy.mariwoo.basic.ui.medicineIntake;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,21 +22,32 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.windy.mariwoo.R;
 import com.windy.mariwoo.basic.activity.DatePickerActivity;
 import com.windy.mariwoo.basic.activity.MedicineAddActivity;
+import com.windy.mariwoo.basic.adapter.MedicineCardAdapter;
 import com.windy.mariwoo.basic.adapter.MedicineOuterAdapter;
+import com.windy.mariwoo.basic.model.MedicineCardItem;
 import com.windy.mariwoo.basic.model.MedicineModel;
+import com.windy.mariwoo.basic.model.MedicineScheduleItem;
 import com.windy.mariwoo.databinding.FragmentMedicineIntakeBinding;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,98 +59,86 @@ import okhttp3.Response;
 
 public class MedicineIntakeFragment extends Fragment {
 
-    private FragmentMedicineIntakeBinding binding;
-
-    // 목록
-    private MedicineOuterAdapter outerAdapter;
-    private List<MedicineModel> listMedicineName;
+    private TextView tvDate;
+    private AppCompatButton btnSearch;
+    private RecyclerView recyclerView;
+    private MedicineCardAdapter cardAdapter;
+    private List<MedicineCardItem> cardList = new ArrayList<>();
 
     private SharedPreferences sharedPreferences;
     private String userNo = "";
     private String serverUrl = "";
+    private String selectedDate = "";
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        MedicineIntakeViewModel medicineIntakeViewModel =
-                new ViewModelProvider(this).get(MedicineIntakeViewModel.class);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_medicine_intake, container, false);
 
-        binding = FragmentMedicineIntakeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        serverUrl = getString(R.string.server_medicine);
+        sharedPreferences = requireActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        userNo = sharedPreferences.getString("user_no", "-1");
 
-        LinearLayout layoutCalendar = binding.medicineIntakeFragmentLayoutCalendar;
-        layoutCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), DatePickerActivity.class);
-                activityResultLauncher.launch(intent);
-            }
+        tvDate    = view.findViewById(R.id.medicineIntakeFragment_editText_date);
+        btnSearch = view.findViewById(R.id.medicineIntakeFragment_button_add);
+        recyclerView = view.findViewById(R.id.medicineIntakeFragment_recyclerview);
+
+        // 오늘 날짜 기본값
+        selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        tvDate.setText(new SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(new Date()));
+
+        // 날짜 클릭 → DatePickerDialog
+        tvDate.setOnClickListener(v -> showDatePicker());
+
+        // RecyclerView 설정
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        cardAdapter = new MedicineCardAdapter(cardList, (item, position) -> {
+            // 먹음 체크 서버 전송
+            checkIntake(item, position);
         });
+        recyclerView.setAdapter(cardAdapter);
 
-        LinearLayout layoutCheck = binding.medicineIntakeFragmentLayoutMorningCheck;
-        layoutCheck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
-                        .setTitle("약 알람")
-                        .setMessage("약 드셨어요?")
-                        .setPositiveButton("예", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+        // 조회 버튼
+        btnSearch.setOnClickListener(v -> loadIntakeList());
 
-                            }
-                        })
-                        .setNeutralButton("아니오", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+        // 화면 진입 시 자동 조회
+        loadIntakeList();
 
-                            }
-                        });
-
-                AlertDialog msgDlg = msgBuilder.create();
-                msgDlg.show();
-            }
-        });
-
-        return root;
+        return view;
     }
 
-    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
+    // 날짜 선택
+    private void showDatePicker() {
+        Calendar cal = Calendar.getInstance();
+        new DatePickerDialog(requireContext(),
+                (view, year, month, dayOfMonth) -> {
+                    Calendar selected = Calendar.getInstance();
+                    selected.set(year, month, dayOfMonth);
+                    selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selected.getTime());
+                    tvDate.setText(year + "년 " + (month + 1) + "월 " + dayOfMonth + "일");
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show();
+    }
 
-            if(result.getResultCode() == RESULT_OK) {
-                Intent resultIntent = result.getData();
-                String state = resultIntent.getStringExtra("state");
+    // 복용 내역 조회
+    private void loadIntakeList() {
+        // 선택한 날짜의 요일 계산 (0:월 ~ 6:일)
+        int weekday = getWeekday(selectedDate);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Log.d("HS", "retrun");
-                    }
-                });
-            }
-        }
-    });
-
-    private void getList() {
-        Log.i("HS MedicineIntakeFragment", "get list");
-
-
-        // POST 파라미터 추가
         RequestBody formBody = new FormBody.Builder()
-                .add("cmd", "login")
-                .add("userNo", userNo)
+                .add("cmd", "get_intake_list")
+                .add("user_no", userNo)
+                .add("date", selectedDate)
+                .add("weekday", String.valueOf(weekday))
                 .build();
 
-        // 요청 만들기
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(serverUrl)
                 .post(formBody)
                 .build();
-        Log.i("HS ListFragment", "request : "+request.toString());
-        // 응답 콜백
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -145,75 +146,103 @@ public class MedicineIntakeFragment extends Fragment {
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responseData = response.body().string();
+                    Log.i("HS", "intake list 응답: " + responseData);
 
-                // 서브 스레드 Ui 변경 할 경우 에러
-                // 메인스레드 Ui 설정
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                    JSONArray jsonArray = new JSONArray(responseData);
+                    List<MedicineCardItem> newList = new ArrayList<>();
 
-                        try {
-                            Log.i("HS", "ListFragment 응답 성공");
-                            final String responseData = response.body().string();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject cardJson = jsonArray.getJSONObject(i);
 
-                            JSONObject json = new JSONObject(responseData);
+                        MedicineCardItem card = new MedicineCardItem();
+                        card.setMedicineName(cardJson.getString("medicine_name"));
 
-                            String result = json.getString("result");
+                        JSONArray scheduleArray = cardJson.getJSONArray("schedules");
+                        List<MedicineScheduleItem> schedules = new ArrayList<>();
 
-                            if("true".equals(result)) {
+                        for (int j = 0; j < scheduleArray.length(); j++) {
+                            JSONObject scheduleJson = scheduleArray.getJSONObject(j);
 
-                                JSONArray jArr = json.getJSONArray("listName");
+                            MedicineScheduleItem schedule = new MedicineScheduleItem();
+                            schedule.setScheduleNo(scheduleJson.getLong("schedule_no"));
+                            schedule.setIntakeTimeType(scheduleJson.getString("intake_time_type"));
+                            schedule.setIntakeType(scheduleJson.getString("intake_type"));
+                            schedule.setIntakeTime(scheduleJson.getString("intake_time"));
+                            schedule.setTaken(scheduleJson.getInt("is_taken") == 1);
 
-                                String medicineName = "";
-
-                                for(int i=0; i<jArr.length(); i++) {
-                                    String name = jArr.getJSONObject(i).getString("name");
-
-                                    MedicineModel medicine = new MedicineModel();
-                                    medicine.setName(name);
-
-                                    JSONArray jArr2 = jArr.getJSONObject(i).getJSONArray("listMedicine");
-
-                                    for(int j=0; j<jArr2.length(); j++) {
-
-                                        String no = jArr2.getJSONObject(i).getString("no");
-                                        String intakeTime = jArr2.getJSONObject(i).getString("intake_time");
-                                        String intakeType = jArr2.getJSONObject(i).getString("intake_time_type");
-
-                                        List<MedicineModel> listMedicine = new ArrayList<>();
-
-                                        MedicineModel listModel = new MedicineModel();
-                                        listModel.setType(intakeType);
-                                        listModel.setTime(intakeTime);
-                                        listModel.setNo(no);
-                                        listMedicine.add(listModel);
-
-                                        medicine.setListMedicine(listMedicine);
-
-                                    }
-
-                                    listMedicineName.add(medicine);
-
-                                }
-
-
-                            } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요." + responseData, Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            schedules.add(schedule);
                         }
+                        card.setSchedules(schedules);
+                        newList.add(card);
                     }
-                });
 
+                    requireActivity().runOnUiThread(() -> {
+                        cardList.clear();
+                        cardList.addAll(newList);
+                        cardAdapter.notifyDataSetChanged();
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+
+    // 복용 체크
+    private void checkIntake(MedicineScheduleItem item, int position) {
+        RequestBody formBody = new FormBody.Builder()
+                .add("cmd", "check_intake")
+                .add("schedule_no", String.valueOf(item.getScheduleNo()))
+                .add("date", selectedDate)
+                .add("is_taken", "1")
+                .build();
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(serverUrl)
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responseData = response.body().string();
+                    JSONObject json = new JSONObject(responseData);
+
+                    if ("true".equals(json.getString("result"))) {
+                        requireActivity().runOnUiThread(() -> {
+                            item.setTaken(true);
+                            cardAdapter.notifyDataSetChanged();
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    // 날짜 → 요일 변환 (0:월 ~ 6:일)
+    private int getWeekday(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(sdf.parse(date));
+            int day = cal.get(Calendar.DAY_OF_WEEK); // 1:일 ~ 7:토
+            return (day == 1) ? 6 : day - 2; // 0:월 ~ 6:일 로 변환
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

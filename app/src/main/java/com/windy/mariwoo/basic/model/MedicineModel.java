@@ -8,6 +8,7 @@ public class MedicineModel {
     private String time;
     private String type;
     private String intakeYn;
+    private String medicineNo; // ✅ 추가
 
     private List<MedicineModel> listMedicine;
 
@@ -50,6 +51,14 @@ public class MedicineModel {
 
     public void setIntakeYn(String intakeYn) {
         this.intakeYn = intakeYn;
+    }
+
+    public String getMedicineNo() {
+        return medicineNo;
+    }
+
+    public void setMedicineNo(String medicineNo) {
+        this.medicineNo = medicineNo;
     }
 
     public List<MedicineModel> getListMedicine() {

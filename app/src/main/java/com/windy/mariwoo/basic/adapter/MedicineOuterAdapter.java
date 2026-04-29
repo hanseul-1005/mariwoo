@@ -17,50 +17,51 @@ import com.windy.mariwoo.basic.model.MedicineModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicineOuterAdapter extends RecyclerView.Adapter<MedicineOuterAdapter.OuterViewHolder> {
+public class MedicineOuterAdapter extends RecyclerView.Adapter<MedicineOuterAdapter.ViewHolder> {
 
     private Context context;
-    private List<MedicineModel> listMedicineName;
+    private List<MedicineModel> list;
+    private OnModifyClickListener listener;
 
-    public MedicineOuterAdapter(Context context, List<MedicineModel> listMedicineName) {
-        this.context = context;
-        this.listMedicineName = listMedicineName;
+    public interface OnModifyClickListener {
+        void onModifyClick(MedicineModel medicine);
     }
-    static class OuterViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle;
+
+    public MedicineOuterAdapter(Context context, List<MedicineModel> list, OnModifyClickListener listener) {
+        this.context = context;
+        this.list = list;
+        this.listener = listener;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_medicine_outer, parent, false);
+        return new ViewHolder(view);
+    }
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        MedicineModel medicine = list.get(position);
+        holder.txtName.setText(medicine.getName());
+
+        MedicineInnerAdapter innerAdapter = new MedicineInnerAdapter(
+                context,
+                medicine.getListMedicine(),
+                listener != null ? item -> listener.onModifyClick(medicine) : null // ✅ null 체크
+        );
+        holder.innerRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        holder.innerRecyclerView.setAdapter(innerAdapter);
+    }
+    @Override
+    public int getItemCount() { return list.size(); }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView txtName;
         RecyclerView innerRecyclerView;
 
-        //ViewHolder
-        OuterViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
-            tvTitle = (TextView) itemView.findViewById(R.id.itemMedicineOuter_textView_title);
+            txtName = itemView.findViewById(R.id.itemMedicineOuter_textView_title);
             innerRecyclerView = itemView.findViewById(R.id.itemMedicineOuter_recyclerview);
         }
-    }
-
-    @NonNull
-    @Override
-    public OuterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_medicine_outer, parent, false);
-        return new OuterViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull OuterViewHolder holder, int position) {
-        MedicineModel medicine = listMedicineName.get(position);
-        holder.tvTitle.setText(medicine.getName());
-
-        Log.d("HS", "outerAdapter medicine.getListMedicine() size : "+medicine.getListMedicine().size());
-        MedicineInnerAdapter innerAdapter = new MedicineInnerAdapter(medicine.getListMedicine());
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
-        holder.innerRecyclerView.setLayoutManager(layoutManager);
-        holder.innerRecyclerView.setAdapter(innerAdapter);
-        holder.innerRecyclerView.setNestedScrollingEnabled(false); // 스크롤 충돌 방지
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return listMedicineName.size();
     }
 }

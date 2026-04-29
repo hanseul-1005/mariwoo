@@ -41,6 +41,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.Call;
@@ -55,6 +56,7 @@ public class MedicineListFragment extends Fragment {
 
     private FragmentMedicineListBinding binding;
     private Spinner spinnerWeekday;
+    private AppCompatButton btnAdd;
 
     // 목록
     private MedicineOuterAdapter outerAdapter;
@@ -80,61 +82,66 @@ public class MedicineListFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
-        AppCompatButton btnAdd = binding.medicineListFragmentButtonAdd;
-
         // 1. 스피너 찾기
         spinnerWeekday = root.findViewById(R.id.medicineListFragment_spinner_weekday);
 
         // 2. 스피너에 넣을 요일 배열 만들기
         String[] weekdays = {"월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"};
-
-        // 3. 어댑터 생성 및 데이터 연결
-        // android.R.layout.simple_spinner_item은 안드로이드 기본 레이아웃을 사용
+// 3. 어댑터 생성 및 데이터 연결
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_spinner_item,
                 weekdays
         );
 
-        // 4. 드롭다운 클릭 시 보일 아이템 레이아웃 설정
+// 4. 드롭다운 레이아웃 설정
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // 5. 스피너에 어댑터 적용
+// 5. 어댑터 적용
         spinnerWeekday.setAdapter(adapter);
 
-        // 6. 스피너 아이템 선택 리스너 달기 (선택 옵션)
+// ✅ 오늘 요일 자동 선택 (리스너 설정 전에 호출)
+        int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK); // 1=일 ~ 7=토
+        int todayIndex = (dayOfWeek + 5) % 7; // 0=월 ~ 6=일
+        spinnerWeekday.setSelection(todayIndex);
+
+// 6. 리스너 등록
         spinnerWeekday.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // position을 통해 선택된 요일의 인덱스 확인 가능 (0: 월요일, 1: 화요일 ...)
                 String selectedWeekday = weekdays[position];
-                Toast.makeText(getActivity(), selectedWeekday + " 선택됨", Toast.LENGTH_SHORT).show();
-
+                // Toast.makeText(...) // 실서비스에서는 제거 권장
                 getList();
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // 아무것도 선택되지 않았을 때 동작
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getList();
-            }
-        });
-
         // 예시 데이터 세팅
         listMedicineName = new ArrayList<>();
 
-        getList();
+        outerAdapter = new MedicineOuterAdapter(getContext(), listMedicineName, medicine -> {
+            // 수정 화면으로 이동
 
-        outerAdapter = new MedicineOuterAdapter(getContext(), listMedicineName);
+            int weekDay = spinnerWeekday.getSelectedItemPosition();
+
+            Intent intent = new Intent(getActivity(), MedicineModifyActivity.class);
+            intent.putExtra("medicine_no", medicine.getMedicineNo());
+            intent.putExtra("medicine_name", medicine.getName());
+            intent.putExtra("weekday", weekDay);
+            activityResultLauncher.launch(intent);
+        });
         rvOuterRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         rvOuterRecyclerView.setAdapter(outerAdapter);
 
-
+        btnAdd = root.findViewById(R.id.medicineListFragment_button_add);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MedicineAddActivity.class);
+                activityResultLauncher.launch(intent); //
+            }
+        });
 
         return root;
     }
@@ -143,24 +150,18 @@ public class MedicineListFragment extends Fragment {
 
 
     // 약 알람 선택 후 해당 값 가져오기
-    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-
-            if(result.getResultCode() == RESULT_OK) {
-                Intent resultIntent = result.getData();
-                String state = resultIntent.getStringExtra("state");
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Log.d("HS", "retrun");
+    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // MedicineAddActivity에서 돌아왔을 때 목록 새로고침
+                        getList();
                     }
-                });
+                }
             }
-        }
-    });
+    );
 
 
     private void getList() {
@@ -217,7 +218,9 @@ public class MedicineListFragment extends Fragment {
 
                                     MedicineModel medicine = new MedicineModel();
                                     medicine.setName(name);
+                                    medicine.setMedicineNo(nameObj.getString("medicine_no"));
 
+                                    Log.i("HS", "medicine_no : " + nameObj.getString("medicine_no"));          // ✅ 추가
                                     JSONArray jArr2 = nameObj.getJSONArray("listMedicine");
 
                                     // 2. 내부 리스트를 안쪽 for문 '밖'에서 한 번만 생성해야 합니다.

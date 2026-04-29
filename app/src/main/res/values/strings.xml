@@ -21,9 +21,12 @@
 
 
     <!--<string name="server_url">https://bicycle.windygnt.myds.me/bicycle/rest</string>-->
-    <string name="server_user">http://192.168.1.44:8080/mariwoo/user.windy</string>
+    <string name="server_user">http://172.30.1.67:8080/mariwoo/user.windy</string>
+    <string name="server_medicine">http://172.30.1.67:8080/mariwoo/medicine.windy</string>
+    <string name="server_hospital">http://172.30.1.67:8080/mariwoo/hospital.windy</string>
+    <!--<string name="server_user">http://192.168.1.44:8080/mariwoo/user.windy</string>
     <string name="server_medicine">http://192.168.1.44:8080/mariwoo/medicine.windy</string>
-    <string name="server_hospital">http://192.168.1.44:8080/mariwoo/hospital.windy</string>
+    <string name="server_hospital">http://192.168.1.44:8080/mariwoo/hospital.windy</string>-->
 
 
     <!--네이버-->

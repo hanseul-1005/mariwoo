@@ -24,7 +24,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/relationIntakeFragment_button_add"
+                app:layout_constraintRight_toLeftOf="@+id/relationIntakeFragment_button_select"
                 android:weightSum="2">
 
                 <LinearLayout
@@ -39,7 +39,7 @@
 
                     <Spinner
                         android:id="@+id/relationIntakeFragment_spinner_target"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:layout_margin="1dp"
                         android:layout_gravity="center_vertical"/>
@@ -110,7 +110,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/relationIntakeFragment_recyclerview_outer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
