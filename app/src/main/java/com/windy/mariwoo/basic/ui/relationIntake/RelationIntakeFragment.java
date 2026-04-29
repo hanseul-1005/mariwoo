@@ -171,7 +171,7 @@ public class RelationIntakeFragment extends Fragment {
                             return;
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                getActivity(),ㅅ
+                                getActivity(),
                                 android.R.layout.simple_spinner_item,
                                 familyNames);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
