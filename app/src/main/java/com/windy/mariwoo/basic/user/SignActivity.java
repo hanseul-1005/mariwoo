@@ -413,9 +413,9 @@ public class SignActivity extends AppCompatActivity {
         String emailAddrDirect = editAddrDirect.getText().toString();
 
         if("직접 입력".equals(emailAddr)) {
-            userEmail = emailId+emailAddrDirect;
+            userEmail = emailId+"@"+emailAddrDirect;
         } else {
-            userEmail = emailId+emailAddr;
+            userEmail = emailId+"@"+emailAddr;
         }
         String birth = editBirth.getText().toString();
 

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -107,6 +108,8 @@ public class ChangeInfoFragment extends Fragment {
         editBirth.setTextColor(getResources().getColor(android.R.color.black));
         String[] parts = userEmail.split("@");
 
+        Log.d("HS", "userEmail : "+userEmail);
+
         String emailId = parts[0]; // "test"
         String emailAddr = parts[1];   // "gmail.com"
         int idx = 6;
@@ -125,7 +128,13 @@ public class ChangeInfoFragment extends Fragment {
         if(idx==6) {
             editAddrDirect.setText(emailAddr);
         }
-
+        // ↓ 이거 추가!
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                emailDomains
+        );
+        editAddr.setAdapter(adapter);
         editAddr.setOnItemClickListener((parent, view, position, id) -> {
             String selected = editAddr.getText().toString();
 
