@@ -407,7 +407,16 @@ public class SignActivity extends AppCompatActivity {
         String pw = editPw.getText().toString();
         String name = editName.getText().toString();
         String tel = editTel.getText().toString();
-        String email = editEmail.getText().toString();
+        String userEmail = "";
+        String emailId = editEmail.getText().toString();
+        String emailAddr = editAddr.getText().toString();
+        String emailAddrDirect = editAddrDirect.getText().toString();
+
+        if("직접 입력".equals(emailAddr)) {
+            userEmail = emailId+emailAddrDirect;
+        } else {
+            userEmail = emailId+emailAddr;
+        }
         String birth = editBirth.getText().toString();
 
         // POST 파라미터 추가
@@ -417,7 +426,7 @@ public class SignActivity extends AppCompatActivity {
                 .add("pw", pw)
                 .add("name", name)
                 .add("tel", tel)
-                .add("email", email)
+                .add("email", userEmail)
                 .add("birth", birth)
                 .build();
 

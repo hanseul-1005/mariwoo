@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#FFFFFF">
+
+    <!-- 💊 아이콘 -->
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/icon_medicine"
+        android:layout_marginBottom="32dp" />
+
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/alarmActivity_text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💊 약 복용 시간입니다!"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#222222"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 약 정보 (아침 식후 / 고혈압약) -->
+    <TextView
+        android:id="@+id/alarmActivity_text_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="#555555"
+        android:gravity="center"
+        android:lineSpacingExtra="6dp"
+        android:layout_marginBottom="48dp" />
+
+    <!-- 확인 버튼 -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/alarmActivity_button_confirm"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:text="확인"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#4CAF50" />
+
+</LinearLayout>

@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.windy.mariwoo.R;
+import com.windy.mariwoo.basic.helper.AlarmHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -255,10 +256,9 @@ public class MedicineModifyActivity extends AppCompatActivity {
             return;
         }
 
-        // ✅ 삭제 대상 no 수집 (기존에 있었는데 지금 시간이 비어있으면 DELETE 대상)
-        String[]      timeTypes   = {"아침", "점심", "저녁", "취침 전"};
-        String[]      intakeTimes = {intakeTime1, intakeTime2, intakeTime3, intakeTime4};
-        StringBuilder deleteNos   = new StringBuilder();
+        String[] timeTypes   = {"아침", "점심", "저녁", "취침 전"};
+        String[] intakeTimes = {intakeTime1, intakeTime2, intakeTime3, intakeTime4};
+        StringBuilder deleteNos = new StringBuilder();
 
         for (int i = 0; i < 4; i++) {
             if (intakeTimes[i].isEmpty() && scheduleNoMap.containsKey(timeTypes[i])) {
@@ -267,10 +267,16 @@ public class MedicineModifyActivity extends AppCompatActivity {
             }
         }
 
+        // ✅ 람다에서 쓸 effectively final 변수
+        final String fIntakeTime1 = intakeTime1, fIntakeType1 = intakeType1;
+        final String fIntakeTime2 = intakeTime2, fIntakeType2 = intakeType2;
+        final String fIntakeTime3 = intakeTime3, fIntakeType3 = intakeType3;
+        final String fIntakeTime4 = intakeTime4, fIntakeType4 = intakeType4;
+
         RequestBody formBody = new FormBody.Builder()
                 .add("cmd", "modify_medicine")
                 .add("medicine_no", medicineNo)
-                .add("weekday", String.valueOf(weekday)) // ✅ Intent로 받은 요일 그대로 사용
+                .add("weekday", String.valueOf(weekday))
                 .add("intake_time_type1", intakeTimeType1)
                 .add("intake_time1", intakeTime1)
                 .add("intake_type1", intakeType1)
@@ -314,6 +320,14 @@ public class MedicineModifyActivity extends AppCompatActivity {
 
                         if ("true".equals(json.optString("result"))) {
                             Toast.makeText(getApplicationContext(), "수정되었습니다.", Toast.LENGTH_SHORT).show();
+
+                            // ✅ 해당 요일 기존 알람 취소 후 새로 등록
+                            cancelAlarms();
+                            setAlarms(fIntakeTime1, fIntakeType1,
+                                    fIntakeTime2, fIntakeType2,
+                                    fIntakeTime3, fIntakeType3,
+                                    fIntakeTime4, fIntakeType4);
+
                             setResult(RESULT_OK);
                             finish();
                         } else {
@@ -325,5 +339,27 @@ public class MedicineModifyActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    // ✅ 해당 요일의 4개 시간대 알람만 취소
+    private void cancelAlarms() {
+        for (int i = 0; i < 4; i++) {
+            AlarmHelper.cancelAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), i);
+        }
+    }
+
+    // ✅ 비어있지 않은 시간만 알람 등록
+    private void setAlarms(String intakeTime1, String intakeType1,
+                           String intakeTime2, String intakeType2,
+                           String intakeTime3, String intakeType3,
+                           String intakeTime4, String intakeType4) {
+        if (!intakeTime1.isEmpty())
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 0, intakeType1, intakeTime1);
+        if (!intakeTime2.isEmpty())
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 1, intakeType2, intakeTime2);
+        if (!intakeTime3.isEmpty())
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 2, intakeType3, intakeTime3);
+        if (!intakeTime4.isEmpty())
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 3, intakeType4, intakeTime4);
     }
 }

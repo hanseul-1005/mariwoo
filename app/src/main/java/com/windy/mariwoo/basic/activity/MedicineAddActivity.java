@@ -3,6 +3,7 @@ package com.windy.mariwoo.basic.activity;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.EditText;
@@ -122,6 +124,14 @@ public class MedicineAddActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!manager.canUseFullScreenIntent()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
     }
 
     @Override
@@ -327,6 +337,42 @@ public class MedicineAddActivity extends AppCompatActivity {
                         .setNegativeButton("취소", null)
                         .show();
             }
+        }
+        // ✅ 배터리 최적화 예외 안 되어있을 때만 요청
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+            Intent batteryIntent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+            batteryIntent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(batteryIntent);
+        }
+        // ✅ Android 14+ fullScreenIntent 권한 확인
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!nm.canUseFullScreenIntent()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("전체화면 알림 권한 필요")
+                        .setMessage("약 복용 알림을 전체화면으로 받으려면 권한이 필요합니다.")
+                        .setPositiveButton("설정으로 이동", (dialog, which) -> {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                            intent.setData(Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        })
+                        .setNegativeButton("취소", null)
+                        .show();
+            }
+        }
+        // ✅ 다른 앱 위에 표시 권한
+        if (!Settings.canDrawOverlays(this)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("다른 앱 위에 표시 권한 필요")
+                    .setMessage("약 복용 알림 화면을 띄우려면 권한이 필요합니다.")
+                    .setPositiveButton("설정으로 이동", (dialog, which) -> {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    })
+                    .setNegativeButton("취소", null)
+                    .show();
         }
     }
     @Override

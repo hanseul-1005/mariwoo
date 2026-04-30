@@ -193,6 +193,7 @@ public class MedicineListFragment extends Fragment {
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
 
+                final String responseData = response.body().string();
                 // 서브 스레드 Ui 변경 할 경우 에러
                 // 메인스레드 Ui 설정
                 getActivity().runOnUiThread(new Runnable() {
@@ -201,7 +202,6 @@ public class MedicineListFragment extends Fragment {
 
                         try {
                             Log.i("HS", "ListFragment 응답 성공");
-                            final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
 

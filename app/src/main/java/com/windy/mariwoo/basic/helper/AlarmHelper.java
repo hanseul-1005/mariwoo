@@ -1,9 +1,12 @@
 package com.windy.mariwoo.basic.helper;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 
 import com.windy.mariwoo.basic.receiver.AlarmReceiver;
 
@@ -14,6 +17,7 @@ public class AlarmHelper {
     // 요일별 알람 설정
     // dayOfWeek: 0=월 1=화 2=수 3=목 4=금 5=토 6=일
     // timeType:  0=아침 1=점심 2=저녁 3=취침전
+    @SuppressLint("ScheduleExactAlarm")
     public static void setAlarm(Context context, String medicineName, String weekday,
                                 int timeType, String intakeType, String time) {
 
@@ -49,12 +53,15 @@ public class AlarmHelper {
             }
 
             // 고유한 requestCode 생성 (약이름 + 요일 + 시간타입)
-            int requestCode = (medicineName + dayIndex + timeType).hashCode();
+            int requestCode = Math.abs((medicineName + dayIndex + timeType).hashCode());
 
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("medicine_name", medicineName);
             intent.putExtra("intake_type", intakeType);
             intent.putExtra("time_type", timeTypeName);
+            intent.putExtra("weekday", String.valueOf(dayIndex)); // 재등록용
+            intent.putExtra("time", time);                        // 재등록용
+            intent.putExtra("time_type_index", timeType);         // 재등록용
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     context,
@@ -63,16 +70,45 @@ public class AlarmHelper {
                     PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
 
-            // 매주 반복 알람
-            alarmManager.setRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY * 7, // 7일마다 반복
-                    pendingIntent
-            );
+            // setExactAndAllowWhileIdle: Doze 모드에서도 정확히 울림 (API 23+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+
+                Log.d("AlarmHelper", "알람 설정됨: " + medicineName + " / " + calendar.getTime().toString());
+            } else {
+                alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        calendar.getTimeInMillis(),
+                        pendingIntent
+                );
+            }
         }
     }
+    public static void cancelAlarm(Context context, String medicineName, String weekday, int timeType) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
+        int dayIndex = Integer.parseInt(weekday.trim());
+
+        // ✅ setAlarm과 동일한 requestCode 생성
+        int requestCode = Math.abs((medicineName + dayIndex + timeType).hashCode());
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
+
+        Log.d("AlarmHelper", "알람 취소됨: " + medicineName + " / 요일:" + dayIndex + " / 시간타입:" + timeType);
+    }
     // 0:월 ~ 6:일 → Calendar 요일 변환
     private static int convertToCalendarDay(int dayIndex) {
         switch (dayIndex) {

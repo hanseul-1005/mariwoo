@@ -1,8 +1,13 @@
 package com.windy.mariwoo.basic;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
@@ -50,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_medicine_list, R.id.nav_medicine_intake_list, R.id.nav_relation_list, R.id.nav_relation_intake_list, R.id.nav_change_info, R.id.nav_change_pw)
+                R.id.nav_medicine_list, R.id.nav_medicine_intake_list,
+                R.id.nav_relation_list, R.id.nav_relation_intake_list,
+                R.id.nav_change_info, R.id.nav_change_pw,
+                R.id.nav_medicine_calendar) // ✅ 추가
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -79,6 +87,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Android 13 이상 알림 권한 요청
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!manager.canUseFullScreenIntent()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
     }
 
     /*@Override
