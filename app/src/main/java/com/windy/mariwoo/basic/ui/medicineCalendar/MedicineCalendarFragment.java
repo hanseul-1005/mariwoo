@@ -94,10 +94,13 @@ public class MedicineCalendarFragment extends Fragment {
 
 
         // 헤더 텍스트 업데이트
-        requireActivity().runOnUiThread(() -> {
-            tvYearMonth.setText(year + "년 " + month + "월");
-            tvMonth.setText(month + "월");
-        });
+        Activity act = getActivity();
+        if (act != null && !act.isFinishing()) {
+            act.runOnUiThread(() -> {
+                tvYearMonth.setText(year + "년 " + month + "월");
+                tvMonth.setText(month + "월");
+            });
+        }
 
         // 달력 날짜 리스트 생성
         List<Integer> dayList = buildDayList(year, month);
@@ -141,7 +144,9 @@ public class MedicineCalendarFragment extends Fragment {
                         statusMap.put(date, status);
                     }
 
-                    requireActivity().runOnUiThread(() -> {
+                    Activity uiAct = getActivity();
+                    if (uiAct == null || uiAct.isFinishing()) return;
+                    uiAct.runOnUiThread(() -> {
                         calendarDayAdapter.updateData(dayList, statusMap,
                                 year, month);
                     });

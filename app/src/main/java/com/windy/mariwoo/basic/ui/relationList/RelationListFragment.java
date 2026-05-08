@@ -72,7 +72,9 @@ public class RelationListFragment extends Fragment {
 
         serverUrl = getString(R.string.server_user);
 
-        sharedPreferences = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return root;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
 
@@ -85,7 +87,7 @@ public class RelationListFragment extends Fragment {
         // 3. 어댑터 생성 및 데이터 연결
         // android.R.layout.simple_spinner_item은 안드로이드 기본 레이아웃을 사용
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getActivity(),
+                activity,
                 android.R.layout.simple_spinner_item,
                 arrType
         );
@@ -102,7 +104,7 @@ public class RelationListFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // position을 통해 선택된 요일의 인덱스 확인 가능 (0: 월요일, 1: 화요일 ...)
                 type = arrType[position];
-                Toast.makeText(getActivity(), type + " 선택됨", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), type + " 선택됨", Toast.LENGTH_SHORT).show();
 
                 getList();
             }
@@ -148,7 +150,9 @@ public class RelationListFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RelationAddActivity.class);
+                Activity act = getActivity();
+                if (act == null) return;
+                Intent intent = new Intent(act, RelationAddActivity.class);
                 startActivity(intent);
             }
         });
@@ -186,16 +190,16 @@ public class RelationListFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-
-                // 서브 스레드 Ui 변경 할 경우 에러
-                // 메인스레드 Ui 설정
-                getActivity().runOnUiThread(new Runnable() {
+                if (response.body() == null) return;
+                final String responseData = response.body().string();
+                Activity act = getActivity();
+                if (act == null || act.isFinishing()) return;
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             Log.i("HS", "RelationListFragment 응답 성공");
-                            final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
 
@@ -205,8 +209,6 @@ public class RelationListFragment extends Fragment {
 
                                 JSONArray jArr = json.getJSONArray("listRelation");
                                 listRelation.clear();
-
-                                String medicineName = "";
 
                                 for(int i=0; i<jArr.length(); i++) {
                                     String no = jArr.getJSONObject(i).getString("no");
@@ -224,14 +226,13 @@ public class RelationListFragment extends Fragment {
 
                                 }
 
-                                // 4. 파싱이 모두 끝난 후 어댑터 새로고침
                                 if(outerAdapter != null) {
                                     outerAdapter.notifyDataSetChanged();
                                 }
 
 
                             } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {
@@ -272,16 +273,16 @@ public class RelationListFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-
-                // 서브 스레드 Ui 변경 할 경우 에러
-                // 메인스레드 Ui 설정
-                getActivity().runOnUiThread(new Runnable() {
+                if (response.body() == null) return;
+                final String responseData = response.body().string();
+                Activity act = getActivity();
+                if (act == null || act.isFinishing()) return;
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             Log.i("HS", "응답 성공");
-                            final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
 
@@ -290,7 +291,7 @@ public class RelationListFragment extends Fragment {
                             if("true".equals(result)) {
                                 getList();
                             } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {

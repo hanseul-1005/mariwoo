@@ -73,13 +73,13 @@ public class MedicineListFragment extends Fragment {
         binding = FragmentMedicineListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // 목록
-        View view = inflater.inflate(R.layout.fragment_medicine_list, container, false);
         RecyclerView rvOuterRecyclerView = binding.medicineListFragmentRecyclerviewOuter;
 
         serverUrl = getString(R.string.server_medicine);
 
-        sharedPreferences = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return root;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
         // 1. 스피너 찾기
@@ -89,7 +89,7 @@ public class MedicineListFragment extends Fragment {
         String[] weekdays = {"월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"};
 // 3. 어댑터 생성 및 데이터 연결
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                getActivity(),
+                activity,
                 android.R.layout.simple_spinner_item,
                 weekdays
         );
@@ -125,7 +125,9 @@ public class MedicineListFragment extends Fragment {
 
             int weekDay = spinnerWeekday.getSelectedItemPosition();
 
-            Intent intent = new Intent(getActivity(), MedicineModifyActivity.class);
+            Activity act = getActivity();
+            if (act == null) return;
+            Intent intent = new Intent(act, MedicineModifyActivity.class);
             intent.putExtra("medicine_no", medicine.getMedicineNo());
             intent.putExtra("medicine_name", medicine.getName());
             intent.putExtra("weekday", weekDay);
@@ -138,8 +140,10 @@ public class MedicineListFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MedicineAddActivity.class);
-                activityResultLauncher.launch(intent); //
+                Activity act = getActivity();
+                if (act == null) return;
+                Intent intent = new Intent(act, MedicineAddActivity.class);
+                activityResultLauncher.launch(intent);
             }
         });
 
@@ -194,8 +198,9 @@ public class MedicineListFragment extends Fragment {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(new Runnable() {
+                Activity act = getActivity();
+                if (act == null || act.isFinishing()) return;
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
@@ -251,7 +256,7 @@ public class MedicineListFragment extends Fragment {
 
 
                             } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {

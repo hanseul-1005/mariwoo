@@ -59,7 +59,9 @@ public class ChangePwFragment extends Fragment {
 
         serverUrl = getString(R.string.server_user);
 
-        sharedPreferences = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return root;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
         editPw = root.findViewById(R.id.changePwFragment_editText_pw);
@@ -95,12 +97,13 @@ public class ChangePwFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (getActivity() == null) return;
+                Activity act = getActivity();
+                if (act == null) return;
                 String pw = editPw.getText().toString();
                 String pwCheck = editPwCheck.getText().toString();
                 if(!pw.equals(pwCheck)) {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-                    int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
+                    int textColor = ContextCompat.getColor(act, R.color.color_r);
                     tvPwCheck.setTextColor(textColor);
                     pwCheckResult = false;
                 } else {
@@ -122,12 +125,13 @@ public class ChangePwFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (getActivity() == null) return;
+                Activity act = getActivity();
+                if (act == null) return;
                 String pw = editPw.getText().toString();
                 String pwCheck = editPwCheck.getText().toString();
                 if(!pw.equals(pwCheck)) {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-                    int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
+                    int textColor = ContextCompat.getColor(act, R.color.color_r);
                     tvPwCheck.setTextColor(textColor);
                     pwCheckResult = false;
                 } else {
@@ -176,15 +180,16 @@ public class ChangePwFragment extends Fragment {
 
                 // 서브 스레드 Ui 변경 할 경우 에러
                 // 메인스레드 Ui 설정
-                if (getActivity() == null) return;
-                getActivity().runOnUiThread(new Runnable() {
+                if (response.body() == null) return;
+                final String responseData = response.body().string();
+                Activity act = getActivity();
+                if (act == null || act.isFinishing()) return;
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             Log.i("HS", "응답 성공");
-                            if (response.body() == null) return;
-                            final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
 

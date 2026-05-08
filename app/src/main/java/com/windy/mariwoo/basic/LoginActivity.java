@@ -130,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         try {
                             Log.i("HS", "응답 성공");
+                            if (response.body() == null) return;
                             final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);

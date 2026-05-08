@@ -67,7 +67,9 @@ public class RelationIntakeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_relation_intake, container, false);
 
         serverUrl = getString(R.string.server_medicine);
-        sharedPreferences = getActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return root;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
         spinnerTarget = root.findViewById(R.id.relationIntakeFragment_spinner_target);
@@ -104,7 +106,9 @@ public class RelationIntakeFragment extends Fragment {
             calendar.setTime(sdf.parse(editDate.getText().toString()));
         } catch (Exception ignored) {}
 
-        new DatePickerDialog(getActivity(), (view, y, m, d) -> {
+        Activity act = getActivity();
+        if (act == null) return;
+        new DatePickerDialog(act, (view, y, m, d) -> {
             String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", y, m + 1, d);
             editDate.setText(date);
         }, calendar.get(Calendar.YEAR),
@@ -164,14 +168,15 @@ public class RelationIntakeFragment extends Fragment {
                         familyNos.add(String.valueOf(obj.getLong("no")));
                     }
 
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> {
+                    Activity uiAct = getActivity();
+                    if (uiAct == null || uiAct.isFinishing()) return;
+                    uiAct.runOnUiThread(() -> {
                         if (familyNames.isEmpty()) {
                             Toast.makeText(getContext(), "등록된 가족이 없습니다.", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                getActivity(),
+                                uiAct,
                                 android.R.layout.simple_spinner_item,
                                 familyNames);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -192,8 +197,9 @@ public class RelationIntakeFragment extends Fragment {
             return;
         }
 
-        int    selectedIndex = spinnerTarget.getSelectedItemPosition();
-        String targetNo      = familyNos.get(selectedIndex);
+        int selectedIndex = spinnerTarget.getSelectedItemPosition();
+        if (selectedIndex < 0 || selectedIndex >= familyNos.size()) return;
+        String targetNo = familyNos.get(selectedIndex);
         String date          = editDate.getText().toString();
         int    weekday       = getWeekdayFromDate(date);
 
@@ -251,8 +257,9 @@ public class RelationIntakeFragment extends Fragment {
                         tempList.add(medicine);
                     }
 
-                    if (getActivity() == null) return;
-                    getActivity().runOnUiThread(() -> {
+                    Activity uiAct = getActivity();
+                    if (uiAct == null || uiAct.isFinishing()) return;
+                    uiAct.runOnUiThread(() -> {
                         listMedicine.clear();
                         listMedicine.addAll(tempList);
                         outerAdapter.notifyDataSetChanged();

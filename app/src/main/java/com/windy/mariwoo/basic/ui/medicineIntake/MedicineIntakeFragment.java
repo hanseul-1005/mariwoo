@@ -180,7 +180,9 @@ public class MedicineIntakeFragment extends Fragment {
                         newList.add(card);
                     }
 
-                    requireActivity().runOnUiThread(() -> {
+                    Activity act = getActivity();
+                    if (act == null || act.isFinishing()) return;
+                    act.runOnUiThread(() -> {
                         cardList.clear();
                         cardList.addAll(newList);
                         cardAdapter.notifyDataSetChanged();
@@ -222,7 +224,9 @@ public class MedicineIntakeFragment extends Fragment {
                     JSONObject json = new JSONObject(responseData);
 
                     if ("true".equals(json.getString("result"))) {
-                        requireActivity().runOnUiThread(() -> {
+                        Activity act = getActivity();
+                        if (act == null || act.isFinishing()) return;
+                        act.runOnUiThread(() -> {
                             item.setTaken(true);
                             cardAdapter.notifyDataSetChanged();
                         });
