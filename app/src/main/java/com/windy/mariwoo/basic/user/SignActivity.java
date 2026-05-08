@@ -126,72 +126,47 @@ public class SignActivity extends AppCompatActivity {
             }
         });
 
-        String pw = editPw.getText().toString();
-        String pwCheck = editPwCheck.getText().toString();
-
         editPw.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!pw.equals(pwCheck)) {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-
-                            int textColor = ContextCompat.getColor(SignActivity.this, R.color.color_r);
-                            tvPwCheck.setTextColor(textColor);
-
-                            pwCheckResult = false;
-                        } else {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
-                            pwCheckResult = true;
-                        }
-                    }
-                });
-
+                String pw = editPw.getText().toString();
+                String pwCheck = editPwCheck.getText().toString();
+                if (!pw.equals(pwCheck)) {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(SignActivity.this, R.color.color_r));
+                    pwCheckResult = false;
+                } else {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    pwCheckResult = true;
+                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
         editPwCheck.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!pw.equals(pwCheck)) {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-
-                            int textColor = ContextCompat.getColor(SignActivity.this, R.color.color_r);
-                            tvPwCheck.setTextColor(textColor);
-
-                            pwCheckResult = false;
-                        } else {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
-                            pwCheckResult = true;
-                        }
-                    }
-                });
-
+                String pw = editPw.getText().toString();
+                String pwCheck = editPwCheck.getText().toString();
+                if (!pw.equals(pwCheck)) {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(SignActivity.this, R.color.color_r));
+                    pwCheckResult = false;
+                } else {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    pwCheckResult = true;
+                }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
         editTel.addTextChangedListener(new TextWatcher() {
             boolean isFormatting;
@@ -377,6 +352,7 @@ public class SignActivity extends AppCompatActivity {
 
                         try {
                             Log.i("HS", "응답 성공");
+                            if (response.body() == null) return;
                             final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
@@ -455,6 +431,7 @@ public class SignActivity extends AppCompatActivity {
 
                         try {
                             Log.i("HS", "응답 성공");
+                            if (response.body() == null) return;
                             final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);
@@ -462,14 +439,14 @@ public class SignActivity extends AppCompatActivity {
                             String result = json.getString("result");
 
                             if("true".equals(result)) {
-                                Toast.makeText(getApplicationContext(), "회원가입되었습니다." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "회원가입되었습니다.", Toast.LENGTH_SHORT).show();
 
                                 Intent intent = new Intent(SignActivity.this, LoginActivity.class);
                                 startActivity(intent);
 
                                 finish();
                             } else {
-                                Toast.makeText(getApplicationContext(), "다시 시도해주세요." + responseData, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {
