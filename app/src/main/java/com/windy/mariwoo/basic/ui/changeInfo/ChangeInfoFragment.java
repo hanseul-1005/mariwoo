@@ -110,8 +110,8 @@ public class ChangeInfoFragment extends Fragment {
 
         Log.d("HS", "userEmail : "+userEmail);
 
-        String emailId = parts[0]; // "test"
-        String emailAddr = parts[1];   // "gmail.com"
+        String emailId = parts.length > 0 ? parts[0] : "";
+        String emailAddr = parts.length > 1 ? parts[1] : "";
         int idx = 6;
 
         for(int i=0; i<emailDomains.length-1; i++) {
@@ -235,12 +235,14 @@ public class ChangeInfoFragment extends Fragment {
 
                 // 서브 스레드 Ui 변경 할 경우 에러
                 // 메인스레드 Ui 설정
+                if (getActivity() == null) return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             Log.i("HS", "응답 성공");
+                            if (response.body() == null) return;
                             final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);

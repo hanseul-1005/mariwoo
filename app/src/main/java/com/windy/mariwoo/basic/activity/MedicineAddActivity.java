@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
-import android.app.TimePickerDialog;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +15,9 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -50,6 +53,8 @@ public class MedicineAddActivity extends AppCompatActivity {
 
     private ImageView imgBack;
     private EditText editName;
+    private FrameLayout layoutLoading;
+    private AppCompatButton btnRegister;
 
     private List<AppCompatButton> dayButtons = new ArrayList<>();
 
@@ -79,6 +84,7 @@ public class MedicineAddActivity extends AppCompatActivity {
         userNo = sharedPreferences.getString("user_no", "-1");
 
         editName = findViewById(R.id.medicineAddActivity_editText_id);
+        layoutLoading = findViewById(R.id.medicineAddActivity_layout_loading);
 
         // onCreate 안에 추가
         checkExactAlarmPermission();
@@ -115,7 +121,7 @@ public class MedicineAddActivity extends AppCompatActivity {
         findViewById(R.id.medicineAddActivity_layout_night_time).setOnClickListener(v -> showTimePicker(tvNightTime));
 
         // 등록 버튼
-        AppCompatButton btnRegister = findViewById(R.id.medicineAddActivity_button_login);
+        btnRegister = findViewById(R.id.medicineAddActivity_button_login);
         btnRegister.setOnClickListener(v -> goAdd());
 
         // 뒤로가기
@@ -144,13 +150,28 @@ public class MedicineAddActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-
+/*
         new TimePickerDialog(this,
                 (view, selectedHour, selectedMinute) -> {
                     String time = String.format("%02d:%02d", selectedHour, selectedMinute);
                     targetTextView.setText(time);
                 },
-                hour, minute, true).show();
+                hour, minute, true).show();*/
+
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(hour)
+                .setMinute(minute)
+                .setTitleText("시간 선택")
+                .build();
+
+        picker.addOnPositiveButtonClickListener(v -> {
+            String time = String.format("%02d:%02d", picker.getHour(), picker.getMinute());
+            targetTextView.setText(time);
+        });
+
+        picker.show(getSupportFragmentManager(), "time_picker");
     }
 
     // 식전/식후 RadioGroup에서 값 가져오기
@@ -243,16 +264,27 @@ public class MedicineAddActivity extends AppCompatActivity {
 
         Log.i("HS MedicineAddActivity", "request : " + request.toString());
 
+        layoutLoading.setVisibility(View.VISIBLE);
+        btnRegister.setEnabled(false);
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> {
+                    layoutLoading.setVisibility(View.GONE);
+                    btnRegister.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 runOnUiThread(() -> {
+                    layoutLoading.setVisibility(View.GONE);
+                    btnRegister.setEnabled(true);
                     try {
+                        if (response.body() == null) return;
                         final String responseData = response.body().string();
                         Log.i("HS", "응답 성공 : " + responseData);
 
@@ -267,7 +299,6 @@ public class MedicineAddActivity extends AppCompatActivity {
                                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
                                 if (!alarmManager.canScheduleExactAlarms()) {
-                                    // 권한 없으면 알림만 표시하고 알람 설정 스킵
                                     Toast.makeText(getApplicationContext(),
                                             "알람 권한이 없어 알림이 설정되지 않았습니다.\n설정에서 권한을 허용해주세요.",
                                             Toast.LENGTH_LONG).show();
@@ -278,7 +309,6 @@ public class MedicineAddActivity extends AppCompatActivity {
                                             intakeTime4, intakeType4);
                                 }
                             } else {
-                                // Android 12 미만은 그냥 설정
                                 setAlarms(name, weekday, intakeTime1, intakeType1,
                                         intakeTime2, intakeType2,
                                         intakeTime3, intakeType3,
@@ -340,7 +370,7 @@ public class MedicineAddActivity extends AppCompatActivity {
         }
         // ✅ 배터리 최적화 예외 안 되어있을 때만 요청
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (!pm.isIgnoringBatteryOptimizations(getPackageName())) {
+        if (pm != null && !pm.isIgnoringBatteryOptimizations(getPackageName())) {
             Intent batteryIntent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
             batteryIntent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(batteryIntent);

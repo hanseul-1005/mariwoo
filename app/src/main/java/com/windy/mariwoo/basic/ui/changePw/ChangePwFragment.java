@@ -87,9 +87,6 @@ public class ChangePwFragment extends Fragment {
 
 
 
-        String pw = editPw.getText().toString();
-        String pwCheck = editPwCheck.getText().toString();
-
         editPw.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -98,24 +95,18 @@ public class ChangePwFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!pw.equals(pwCheck)) {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-
-                            // MainActivity.this 처럼 Activity 이름을 명시해야 Context로 인식됩니다.
-                            int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
-                            tvPwCheck.setTextColor(textColor);
-
-                            pwCheckResult = false;
-                        } else {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
-                            pwCheckResult = true;
-                        }
-                    }
-                });
-
+                if (getActivity() == null) return;
+                String pw = editPw.getText().toString();
+                String pwCheck = editPwCheck.getText().toString();
+                if(!pw.equals(pwCheck)) {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+                    int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
+                    tvPwCheck.setTextColor(textColor);
+                    pwCheckResult = false;
+                } else {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    pwCheckResult = true;
+                }
             }
 
             @Override
@@ -131,24 +122,18 @@ public class ChangePwFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!pw.equals(pwCheck)) {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
-
-                            // MainActivity.this 처럼 Activity 이름을 명시해야 Context로 인식됩니다.
-                            int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
-                            tvPwCheck.setTextColor(textColor);
-
-                            pwCheckResult = false;
-                        } else {
-                            tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
-                            pwCheckResult = true;
-                        }
-                    }
-                });
-
+                if (getActivity() == null) return;
+                String pw = editPw.getText().toString();
+                String pwCheck = editPwCheck.getText().toString();
+                if(!pw.equals(pwCheck)) {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치하지않습니다.");
+                    int textColor = ContextCompat.getColor(getActivity(), R.color.color_r);
+                    tvPwCheck.setTextColor(textColor);
+                    pwCheckResult = false;
+                } else {
+                    tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    pwCheckResult = true;
+                }
             }
 
             @Override
@@ -191,12 +176,14 @@ public class ChangePwFragment extends Fragment {
 
                 // 서브 스레드 Ui 변경 할 경우 에러
                 // 메인스레드 Ui 설정
+                if (getActivity() == null) return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         try {
                             Log.i("HS", "응답 성공");
+                            if (response.body() == null) return;
                             final String responseData = response.body().string();
 
                             JSONObject json = new JSONObject(responseData);

@@ -313,7 +313,7 @@
                             android:id="@+id/medicineModifyActivity_layout_morning_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -432,7 +432,7 @@
                             android:id="@+id/medicineModifyActivity_layout_launch_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -551,7 +551,7 @@
                             android:id="@+id/medicineModifyActivity_layout_dinner_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -670,7 +670,7 @@
                             android:id="@+id/medicineModifyActivity_layout_night_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 

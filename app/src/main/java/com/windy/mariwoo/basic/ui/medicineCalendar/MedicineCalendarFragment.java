@@ -94,9 +94,10 @@ public class MedicineCalendarFragment extends Fragment {
 
 
         // 헤더 텍스트 업데이트
-        requireActivity().runOnUiThread(() ->
-                tvYearMonth.setText(year + "년 " + month + "월"));
-                tvMonth.setText(month + "월"); // ✅ 추가
+        requireActivity().runOnUiThread(() -> {
+            tvYearMonth.setText(year + "년 " + month + "월");
+            tvMonth.setText(month + "월");
+        });
 
         // 달력 날짜 리스트 생성
         List<Integer> dayList = buildDayList(year, month);
@@ -123,8 +124,9 @@ public class MedicineCalendarFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
+                    if (response.body() == null) return;
                     String responseData = response.body().string();
-                    Log.i("HS", "calendar 응답: " + responseData); // ✅ 이미 있는지 확인
+                    Log.i("HS", "calendar 응답: " + responseData);
                     JSONArray jsonArray = new JSONArray(responseData);
 
                     // key: "2025-02-13", value: "all" or "partial"

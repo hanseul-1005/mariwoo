@@ -311,7 +311,7 @@
                             android:id="@+id/medicineAddActivity_layout_morning_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -319,6 +319,7 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/icon_time"
+                                android:background="@color/base_background"
                                 android:layout_marginRight="5dp"/>
 
                             <TextView
@@ -327,6 +328,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="시간 선택"
                                 android:textColor="@color/theme_color"
+                                android:background="@color/base_background"
                                 android:textSize="13sp"/>
 
                         </LinearLayout>
@@ -430,7 +432,7 @@
                             android:id="@+id/medicineAddActivity_layout_launch_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -438,6 +440,7 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/icon_time"
+                                android:background="@color/base_background"
                                 android:layout_marginRight="5dp"/>
 
                             <TextView
@@ -446,6 +449,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="시간 선택"
                                 android:textColor="@color/theme_color"
+                                android:background="@color/base_background"
                                 android:textSize="13sp"/>
 
                         </LinearLayout>
@@ -549,7 +553,7 @@
                             android:id="@+id/medicineAddActivity_layout_dinner_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -557,6 +561,7 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/icon_time"
+                                android:background="@color/base_background"
                                 android:layout_marginRight="5dp"/>
 
                             <TextView
@@ -565,6 +570,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="시간 선택"
                                 android:textColor="@color/theme_color"
+                                android:background="@color/base_background"
                                 android:textSize="13sp"/>
 
                         </LinearLayout>
@@ -668,7 +674,7 @@
                             android:id="@+id/medicineAddActivity_layout_night_time"
                             android:layout_width="match_parent"
                             android:layout_height="41dp"
-                            android:background="@color/base_background"
+                            android:background="@drawable/layout_bottom_stroke"
                             android:gravity="center"
                             android:orientation="horizontal">
 
@@ -676,6 +682,7 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:src="@drawable/icon_time"
+                                android:background="@color/base_background"
                                 android:layout_marginRight="5dp"/>
 
                             <TextView
@@ -684,6 +691,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="시간 선택"
                                 android:textColor="@color/theme_color"
+                                android:background="@color/base_background"
                                 android:textSize="13sp"/>
 
                         </LinearLayout>
@@ -727,5 +735,23 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/medicineAddActivity_layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"/>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

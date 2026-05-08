@@ -148,6 +148,7 @@ public class MedicineIntakeFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
+                    if (response.body() == null) return;
                     String responseData = response.body().string();
                     Log.i("HS", "intake list 응답: " + responseData);
 
@@ -216,6 +217,7 @@ public class MedicineIntakeFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
+                    if (response.body() == null) return;
                     String responseData = response.body().string();
                     JSONObject json = new JSONObject(responseData);
 

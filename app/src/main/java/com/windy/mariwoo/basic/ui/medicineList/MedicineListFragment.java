@@ -192,10 +192,9 @@ public class MedicineListFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
-
+                if (response.body() == null) return;
                 final String responseData = response.body().string();
-                // 서브 스레드 Ui 변경 할 경우 에러
-                // 메인스레드 Ui 설정
+                if (getActivity() == null) return;
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
