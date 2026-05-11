@@ -104,8 +104,8 @@ public class MedicineModifyActivity extends AppCompatActivity {
             finish();
         });
 
-        ImageView imgDelete = findViewById(R.id.medicineModifyActivity_imageView_delete);
-        imgDelete.setOnClickListener(v -> showDeleteConfirmDialog());
+        AppCompatButton btnDelete = findViewById(R.id.medicineModifyActivity_button_delete);
+        btnDelete.setOnClickListener(v -> showDeleteConfirmDialog());
 
         loadDetail();
     }
