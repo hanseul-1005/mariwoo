@@ -735,7 +735,7 @@
                 android:textColor="@color/color_r"
                 android:textSize="17dp"
                 android:textStyle="bold"
-                android:background="@drawable/layout_border_radius10"
+                android:background="@drawable/layout_border_radius10_red"
                 android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
