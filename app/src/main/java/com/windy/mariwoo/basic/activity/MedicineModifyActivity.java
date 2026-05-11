@@ -104,7 +104,61 @@ public class MedicineModifyActivity extends AppCompatActivity {
             finish();
         });
 
+        ImageView imgDelete = findViewById(R.id.medicineModifyActivity_imageView_delete);
+        imgDelete.setOnClickListener(v -> showDeleteConfirmDialog());
+
         loadDetail();
+    }
+
+    private void showDeleteConfirmDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("약 삭제")
+                .setMessage("'" + medicineName + "' 약을 삭제하시겠습니까?")
+                .setPositiveButton("삭제", (dialog, which) -> deleteMedicine())
+                .setNegativeButton("취소", null)
+                .show();
+    }
+
+    private void deleteMedicine() {
+        RequestBody formBody = new FormBody.Builder()
+                .add("cmd", "delete_medicine")
+                .add("medicine_no", medicineNo)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(serverUrl)
+                .post(formBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(getApplicationContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.body() == null) return;
+                final String responseData = response.body().string();
+                runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    try {
+                        org.json.JSONObject json = new org.json.JSONObject(responseData);
+                        if ("true".equals(json.optString("result"))) {
+                            Toast.makeText(getApplicationContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
     }
 
     @Override

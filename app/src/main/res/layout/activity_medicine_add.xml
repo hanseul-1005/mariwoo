@@ -43,6 +43,7 @@
                 android:background="@color/top_color"
                 android:text="약 등록" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

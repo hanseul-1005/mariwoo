@@ -43,6 +43,18 @@
                 android:background="@color/top_color"
                 android:text="약 수정" />
 
+            <ImageView
+                android:id="@+id/medicineModifyActivity_imageView_delete"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginRight="5dp"
+                android:src="@drawable/icon_delete"
+                android:background="@color/top_color"
+                android:padding="10dp" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
