@@ -123,6 +123,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
         RequestBody formBody = new FormBody.Builder()
                 .add("cmd", "delete_medicine")
                 .add("medicine_no", medicineNo)
+                .add("weekday", String.valueOf(weekday))
                 .build();
 
         Request request = new Request.Builder()
