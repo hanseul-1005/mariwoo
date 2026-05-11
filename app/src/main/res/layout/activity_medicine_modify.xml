@@ -717,26 +717,26 @@
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/medicineModifyActivity_button_login"
+                android:id="@+id/medicineModifyActivity_button_modify"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:text="수정"
                 android:textColor="@color/theme_color"
-                android:textSize="17dp"
+                android:textSize="15dp"
                 android:textStyle="bold"
                 android:background="@drawable/layout_border_radius10"
+                android:layout_marginBottom="10dp"
                 app:layout_constraintBottom_toTopOf="@+id/medicineModifyActivity_button_delete"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/medicineModifyActivity_button_delete"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:text="전체 약 알람 삭제"
                 android:textColor="@color/color_r"
-                android:textSize="17dp"
+                android:textSize="15dp"
                 android:textStyle="bold"
                 android:background="@drawable/layout_border_radius10_red"
-                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

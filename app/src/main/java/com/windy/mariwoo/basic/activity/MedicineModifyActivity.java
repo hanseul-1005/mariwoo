@@ -94,7 +94,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
         findViewById(R.id.medicineModifyActivity_layout_dinner_time).setOnClickListener(v -> showTimePicker(tvDinnerTime));
         findViewById(R.id.medicineModifyActivity_layout_night_time).setOnClickListener(v -> showTimePicker(tvNightTime));
 
-        AppCompatButton btnModify = findViewById(R.id.medicineModifyActivity_button_login);
+        AppCompatButton btnModify = findViewById(R.id.medicineModifyActivity_button_modify);
         btnModify.setText("수정");
         btnModify.setOnClickListener(v -> goModify());
 
