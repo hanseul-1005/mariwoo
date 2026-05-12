@@ -66,6 +66,9 @@ public class MedicineListFragment extends Fragment {
     private String userNo = "";
     private String serverUrl = "";
 
+    // ✅ 싱글톤 OkHttpClient
+    private final OkHttpClient client = new OkHttpClient();
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -181,7 +184,6 @@ public class MedicineListFragment extends Fragment {
                 .build();
 
         // 요청 만들기
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(serverUrl)
                 .post(formBody)

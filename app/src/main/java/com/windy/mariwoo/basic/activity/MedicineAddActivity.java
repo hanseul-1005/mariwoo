@@ -68,6 +68,9 @@ public class MedicineAddActivity extends AppCompatActivity {
     private String userNo = "";
     private String serverUrl = "";
 
+    // ✅ 싱글톤 OkHttpClient (매 요청마다 생성하지 않음)
+    private final OkHttpClient client = new OkHttpClient();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,14 +133,7 @@ public class MedicineAddActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (!manager.canUseFullScreenIntent()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            }
-        }
+        // fullScreenIntent 권한은 checkExactAlarmPermission()에서 통합 처리
     }
 
     @Override
@@ -256,7 +252,6 @@ public class MedicineAddActivity extends AppCompatActivity {
                 .add("intake_type4", intakeType4)
                 .build();
 
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(serverUrl)
                 .post(formBody)
@@ -280,14 +275,22 @@ public class MedicineAddActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                // ✅ IO 작업(body 읽기)은 백그라운드 스레드에서 처리
+                if (response.body() == null) {
+                    runOnUiThread(() -> {
+                        layoutLoading.setVisibility(View.GONE);
+                        btnRegister.setEnabled(true);
+                    });
+                    return;
+                }
+                final String responseData = response.body().string();
+                Log.i("HS", "응답 성공 : " + responseData);
+
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
                     layoutLoading.setVisibility(View.GONE);
                     btnRegister.setEnabled(true);
                     try {
-                        if (response.body() == null) return;
-                        final String responseData = response.body().string();
-                        Log.i("HS", "응답 성공 : " + responseData);
-
                         JSONObject json = new JSONObject(responseData);
                         String result = json.getString("result");
 
@@ -321,7 +324,7 @@ public class MedicineAddActivity extends AppCompatActivity {
                             setResult(RESULT_OK, intent);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "등록 실패: " + responseData, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "등록에 실패했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
