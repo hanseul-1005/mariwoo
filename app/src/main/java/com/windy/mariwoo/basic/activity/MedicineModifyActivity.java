@@ -186,6 +186,14 @@ public class MedicineModifyActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
+                Log.i("HS", "deleteMedicine 응답 : " + responseData);
+
+                // 빈 응답 방어 처리
+                if (responseData == null || responseData.trim().isEmpty()) {
+                    Log.e("HS", "deleteMedicine: 서버 응답이 비어있음");
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
+                    return;
+                }
 
                 runOnUiThread(() -> {
                     if (isFinishing() || isDestroyed()) return;
@@ -276,6 +284,12 @@ public class MedicineModifyActivity extends AppCompatActivity {
                     Log.i("HS", "medicine_no : " + medicineNo);
                     Log.i("HS", "weekday : " + weekday);
                     Log.i("HS", "loadDetail 응답 : " + responseData);
+
+                    // 빈 응답 방어 처리 (서버 예외 시 body가 빈 문자열로 올 수 있음)
+                    if (responseData == null || responseData.trim().isEmpty()) {
+                        Log.e("HS", "loadDetail: 서버 응답이 비어있음");
+                        return;
+                    }
 
                     JSONObject json = new JSONObject(responseData);
 
@@ -451,8 +465,17 @@ public class MedicineModifyActivity extends AppCompatActivity {
                 if (response.body() == null) return;
 
                 try {
-                    String     responseData = response.body().string();
-                    JSONObject json         = new JSONObject(responseData);
+                    String responseData = response.body().string();
+                    Log.i("HS", "goModify 응답 : " + responseData);
+
+                    // 빈 응답 방어 처리
+                    if (responseData == null || responseData.trim().isEmpty()) {
+                        Log.e("HS", "goModify: 서버 응답이 비어있음");
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
+                        return;
+                    }
+
+                    JSONObject json = new JSONObject(responseData);
 
                     runOnUiThread(() -> {
                         if (isFinishing() || isDestroyed()) return;
