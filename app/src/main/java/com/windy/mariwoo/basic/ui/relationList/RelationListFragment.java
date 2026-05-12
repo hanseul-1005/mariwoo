@@ -48,20 +48,36 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * 관계 목록 Fragment
+ * - 스피너로 관계 유형 선택 (열람자 / 대상자 / 신청자)
+ * - 각 관계 항목에서 수락(Y) / 거절(D) / 삭제(D) 처리
+ * - 추가 버튼 → RelationAddActivity로 이동
+ *
+ * 관계 유형:
+ *   열람자 - 내가 상대방의 복용 현황을 볼 수 있음
+ *   대상자 - 상대방이 나의 복용 현황을 볼 수 있음
+ *   신청자 - 아직 수락되지 않은 대기 상태
+ */
 public class RelationListFragment extends Fragment {
 
     private FragmentRelationListBinding binding;
-    private Spinner spinnerType;
+    private Spinner         spinnerType;
     private AppCompatButton btnAdd;
-    // 목록
+
+    // 관계 목록 데이터 및 어댑터
     private RelationOuterAdapter outerAdapter;
-    private List<RelationModel> listRelation;
+    private List<RelationModel>  listRelation;
 
     private SharedPreferences sharedPreferences;
-    private String userNo = "";
+    private String userNo    = "";
     private String serverUrl = "";
-    private String type = "열람자";
+    private String type      = "열람자"; // 현재 선택된 관계 유형 (기본값)
 
+    // 싱글톤 OkHttpClient
+    private final OkHttpClient client = new OkHttpClient();
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         RelationListViewModel relationListViewModel =
@@ -72,116 +88,103 @@ public class RelationListFragment extends Fragment {
 
         serverUrl = getString(R.string.server_user);
 
+        // Fragment 생명주기 안전 처리
         Activity activity = getActivity();
         if (activity == null) return root;
         sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
-
-        // 1. 스피너 찾기
+        // 관계 유형 스피너 설정
         spinnerType = root.findViewById(R.id.relationListFragment_spinner_type);
-
-        // 2. 스피너에 넣을 요일 배열 만들기
         String[] arrType = {"열람자", "대상자", "신청자"};
 
-        // 3. 어댑터 생성 및 데이터 연결
-        // android.R.layout.simple_spinner_item은 안드로이드 기본 레이아웃을 사용
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 activity,
                 android.R.layout.simple_spinner_item,
                 arrType
         );
-
-        // 4. 드롭다운 클릭 시 보일 아이템 레이아웃 설정
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // 5. 스피너에 어댑터 적용
         spinnerType.setAdapter(adapter);
 
-        // 6. 스피너 아이템 선택 리스너 달기 (선택 옵션)
+        // 관계 유형 선택 시 목록 재조회
         spinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // position을 통해 선택된 요일의 인덱스 확인 가능 (0: 월요일, 1: 화요일 ...)
-                type = arrType[position];
+                type = arrType[position]; // 선택된 유형 저장
                 Toast.makeText(getContext(), type + " 선택됨", Toast.LENGTH_SHORT).show();
-
-                getList();
+                getList(); // 해당 유형 목록 조회
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // 아무것도 선택되지 않았을 때 동작
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-        // 예시 데이터 세팅
+
         listRelation = new ArrayList<>();
 
         RecyclerView rvOuterRecyclerView = binding.relationListFragmentRecyclerviewOuter;
 
-        outerAdapter = new RelationOuterAdapter(getContext(), listRelation, new RelationOuterAdapter.OnRelationClickListener() {
-            @Override
-            public void onDelete(RelationModel relation, int position) {
-                // 삭제 버튼 클릭
-                Log.d("HS", "삭제 클릭 : " + relation.getName());
-                // TODO: 삭제 REST 호출
-                setAccept(relation.getNo(), "D");
-            }
+        // 관계 목록 어댑터 (삭제/수락/거절 콜백)
+        outerAdapter = new RelationOuterAdapter(getContext(), listRelation,
+                new RelationOuterAdapter.OnRelationClickListener() {
+                    @Override
+                    public void onDelete(RelationModel relation, int position) {
+                        // 삭제: accept='D'로 관계 상태 변경
+                        Log.d("HS", "삭제 클릭 : " + relation.getName());
+                        setAccept(relation.getNo(), "D");
+                    }
 
-            @Override
-            public void onAccept(RelationModel relation, int position) {
-                // 수락 버튼 클릭
-                Log.d("HS", "수락 클릭 : " + relation.getName());
-                setAccept(relation.getNo(), "Y");
-            }
+                    @Override
+                    public void onAccept(RelationModel relation, int position) {
+                        // 수락: accept='Y'로 관계 상태 변경
+                        Log.d("HS", "수락 클릭 : " + relation.getName());
+                        setAccept(relation.getNo(), "Y");
+                    }
 
-            @Override
-            public void onReject(RelationModel relation, int position) {
-                // 거절 버튼 클릭
-                Log.d("HS", "거절 클릭 : " + relation.getName());
-                setAccept(relation.getNo(), "D");
-            }
-        });
+                    @Override
+                    public void onReject(RelationModel relation, int position) {
+                        // 거절: accept='D'로 관계 상태 변경 (삭제와 동일 처리)
+                        Log.d("HS", "거절 클릭 : " + relation.getName());
+                        setAccept(relation.getNo(), "D");
+                    }
+                });
 
         rvOuterRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         rvOuterRecyclerView.setAdapter(outerAdapter);
 
+        // 관계 추가 버튼
         btnAdd = root.findViewById(R.id.relationListFragment_button_add);
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity act = getActivity();
-                if (act == null) return;
-                Intent intent = new Intent(act, RelationAddActivity.class);
-                startActivity(intent);
-            }
+        btnAdd.setOnClickListener(v -> {
+            Activity act = getActivity();
+            if (act == null) return;
+            startActivity(new Intent(act, RelationAddActivity.class));
         });
 
+        // 초기 목록 조회
         getList();
 
         return root;
     }
 
-
+    /**
+     * 관계 목록 조회
+     * 현재 선택된 type(열람자/대상자/신청자)에 해당하는 관계 목록 요청
+     */
     private void getList() {
         Log.i("HS RelationListFragment", "get list");
 
-
-        // POST 파라미터 추가
         RequestBody formBody = new FormBody.Builder()
-                .add("cmd", "relation_list")
-                .add("no", userNo)
-                .add("type", type)
+                .add("cmd",  "relation_list")
+                .add("no",   userNo)
+                .add("type", type) // 열람자 / 대상자 / 신청자
                 .build();
 
-        // 요청 만들기
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(serverUrl)
                 .post(formBody)
                 .build();
-        Log.i("HS RelationListFragment", "request : "+request.toString());
-        // 응답 콜백
+
+        Log.i("HS RelationListFragment", "request : " + request.toString());
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -190,81 +193,75 @@ public class RelationListFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+                // body 읽기는 백그라운드에서 처리
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
+
+                // Fragment detach 체크
                 Activity act = getActivity();
                 if (act == null || act.isFinishing()) return;
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        try {
-                            Log.i("HS", "RelationListFragment 응답 성공");
+                act.runOnUiThread(() -> {
+                    try {
+                        Log.i("HS", "RelationListFragment 응답 성공");
 
-                            JSONObject json = new JSONObject(responseData);
+                        JSONObject json   = new JSONObject(responseData);
+                        String     result = json.getString("result");
 
-                            String result = json.getString("result");
+                        if ("true".equals(result)) {
+                            JSONArray jArr = json.getJSONArray("listRelation");
+                            listRelation.clear();
 
-                            if("true".equals(result)) {
+                            for (int i = 0; i < jArr.length(); i++) {
+                                JSONObject obj = jArr.getJSONObject(i);
 
-                                JSONArray jArr = json.getJSONArray("listRelation");
-                                listRelation.clear();
-
-                                for(int i=0; i<jArr.length(); i++) {
-                                    String no = jArr.getJSONObject(i).getString("no");
-                                    String name = jArr.getJSONObject(i).getString("name");
-                                    String tel = jArr.getJSONObject(i).getString("tel");
-                                    String type = jArr.getJSONObject(i).getString("type");
-
-                                    RelationModel relation = new RelationModel();
-                                    relation.setNo(no);
-                                    relation.setName(name);
-                                    relation.setTel(tel);
-                                    relation.setType(type);
-
-                                    listRelation.add(relation);
-
-                                }
-
-                                if(outerAdapter != null) {
-                                    outerAdapter.notifyDataSetChanged();
-                                }
-
-
-                            } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                                RelationModel relation = new RelationModel();
+                                relation.setNo(obj.getString("no"));
+                                relation.setName(obj.getString("name"));
+                                relation.setTel(obj.getString("tel"));
+                                relation.setType(obj.getString("type"));
+                                listRelation.add(relation);
                             }
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            if (outerAdapter != null) {
+                                outerAdapter.notifyDataSetChanged();
+                            }
+
+                        } else {
+                            Toast.makeText(getContext(),
+                                    "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.",
+                                    Toast.LENGTH_SHORT).show();
                         }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
-
             }
         });
     }
 
+    /**
+     * 관계 수락/거절/삭제 처리
+     * @param no     관계 번호
+     * @param accept 처리 값 ("Y"=수락, "D"=거절/삭제)
+     */
     private void setAccept(String no, String accept) {
-        Log.i("HS RelationListFragment", "set Accept");
+        Log.i("HS RelationListFragment", "set Accept: " + accept);
 
-
-
-        // POST 파라미터 추가
-        RequestBody formBody = new FormBody  .Builder()
-                .add("cmd", "change_accept")
-                .add("no", no)
-                .add("accept", accept)
+        RequestBody formBody = new FormBody.Builder()
+                .add("cmd",    "change_accept")
+                .add("no",     no)
+                .add("accept", accept) // "Y" 또는 "D"
                 .build();
 
-        // 요청 만들기
-        OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(serverUrl)
                 .post(formBody)
                 .build();
-        Log.i("HS RelationListFragment", "request : "+request.toString());
-        // 응답 콜백
+
+        Log.i("HS RelationListFragment", "request : " + request.toString());
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -275,31 +272,29 @@ public class RelationListFragment extends Fragment {
             public void onResponse(Call call, final Response response) throws IOException {
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
+
                 Activity act = getActivity();
                 if (act == null || act.isFinishing()) return;
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        try {
-                            Log.i("HS", "응답 성공");
+                act.runOnUiThread(() -> {
+                    try {
+                        Log.i("HS", "setAccept 응답 성공");
 
-                            JSONObject json = new JSONObject(responseData);
+                        JSONObject json   = new JSONObject(responseData);
+                        String     result = json.getString("result");
 
-                            String result = json.getString("result");
-
-                            if("true".equals(result)) {
-                                getList();
-                            } else {
-                                Toast.makeText(getContext(), "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if ("true".equals(result)) {
+                            getList(); // 처리 성공 후 목록 새로고침
+                        } else {
+                            Toast.makeText(getContext(),
+                                    "처리에 실패했습니다. 다시 시도해주세요.",
+                                    Toast.LENGTH_SHORT).show();
                         }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
-
             }
         });
     }
@@ -307,6 +302,6 @@ public class RelationListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
+        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
     }
 }
