@@ -22,6 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String medicineName  = intent.getStringExtra("medicine_name");
+        String medicineNo    = intent.getStringExtra("medicine_no");
         String intakeType    = intent.getStringExtra("intake_type");
         String timeType      = intent.getStringExtra("time_type");
         String weekday       = intent.getStringExtra("weekday");
@@ -73,9 +74,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
 
-        // ✅ 다음 주 재등록
-        if (medicineName != null && weekday != null && time != null) {
-            AlarmHelper.setAlarm(context, medicineName, weekday, timeTypeIndex, intakeType, time);
+        // 다음 주 재등록
+        if (medicineName != null && medicineNo != null && weekday != null && time != null) {
+            AlarmHelper.setAlarm(context, medicineName, medicineNo, weekday, timeTypeIndex, intakeType, time);
         }
     }
 

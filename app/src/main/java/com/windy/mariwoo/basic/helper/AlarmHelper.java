@@ -57,6 +57,7 @@ public class AlarmHelper {
 
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("medicine_name", medicineName);
+            intent.putExtra("medicine_no", medicineNo);           // 재등록용
             intent.putExtra("intake_type", intakeType);
             intent.putExtra("time_type", timeTypeName);
             intent.putExtra("weekday", String.valueOf(dayIndex)); // 재등록용
