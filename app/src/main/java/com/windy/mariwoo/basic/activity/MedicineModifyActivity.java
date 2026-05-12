@@ -148,6 +148,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
                     try {
                         org.json.JSONObject json = new org.json.JSONObject(responseData);
                         if ("true".equals(json.optString("result"))) {
+                            AlarmHelper.cancelAllAlarms(getApplicationContext(), medicineNo);
                             Toast.makeText(getApplicationContext(), "삭제되었습니다.", Toast.LENGTH_SHORT).show();
                             setResult(RESULT_OK);
                             finish();
@@ -396,25 +397,25 @@ public class MedicineModifyActivity extends AppCompatActivity {
         });
     }
 
-    // ✅ 해당 요일의 4개 시간대 알람만 취소
+    // 해당 요일의 4개 시간대 알람만 취소
     private void cancelAlarms() {
         for (int i = 0; i < 4; i++) {
-            AlarmHelper.cancelAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), i);
+            AlarmHelper.cancelAlarm(getApplicationContext(), medicineNo, String.valueOf(weekday), i);
         }
     }
 
-    // ✅ 비어있지 않은 시간만 알람 등록
+    // 비어있지 않은 시간만 알람 등록
     private void setAlarms(String intakeTime1, String intakeType1,
                            String intakeTime2, String intakeType2,
                            String intakeTime3, String intakeType3,
                            String intakeTime4, String intakeType4) {
         if (!intakeTime1.isEmpty())
-            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 0, intakeType1, intakeTime1);
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, medicineNo, String.valueOf(weekday), 0, intakeType1, intakeTime1);
         if (!intakeTime2.isEmpty())
-            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 1, intakeType2, intakeTime2);
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, medicineNo, String.valueOf(weekday), 1, intakeType2, intakeTime2);
         if (!intakeTime3.isEmpty())
-            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 2, intakeType3, intakeTime3);
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, medicineNo, String.valueOf(weekday), 2, intakeType3, intakeTime3);
         if (!intakeTime4.isEmpty())
-            AlarmHelper.setAlarm(getApplicationContext(), medicineName, String.valueOf(weekday), 3, intakeType4, intakeTime4);
+            AlarmHelper.setAlarm(getApplicationContext(), medicineName, medicineNo, String.valueOf(weekday), 3, intakeType4, intakeTime4);
     }
 }

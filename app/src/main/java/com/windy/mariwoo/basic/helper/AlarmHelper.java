@@ -18,8 +18,8 @@ public class AlarmHelper {
     // dayOfWeek: 0=월 1=화 2=수 3=목 4=금 5=토 6=일
     // timeType:  0=아침 1=점심 2=저녁 3=취침전
     @SuppressLint("ScheduleExactAlarm")
-    public static void setAlarm(Context context, String medicineName, String weekday,
-                                int timeType, String intakeType, String time) {
+    public static void setAlarm(Context context, String medicineName, String medicineNo,
+                                String weekday, int timeType, String intakeType, String time) {
 
         if (time == null || time.isEmpty()) return;
 
@@ -52,8 +52,8 @@ public class AlarmHelper {
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
             }
 
-            // 고유한 requestCode 생성 (약이름 + 요일 + 시간타입)
-            int requestCode = Math.abs((medicineName + dayIndex + timeType).hashCode());
+            // 고유한 requestCode 생성 (약번호 + 요일 + 시간타입)
+            int requestCode = Math.abs((medicineNo + dayIndex + timeType).hashCode());
 
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("medicine_name", medicineName);
@@ -88,13 +88,13 @@ public class AlarmHelper {
             }
         }
     }
-    public static void cancelAlarm(Context context, String medicineName, String weekday, int timeType) {
+    public static void cancelAlarm(Context context, String medicineNo, String weekday, int timeType) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         int dayIndex = Integer.parseInt(weekday.trim());
 
-        // ✅ setAlarm과 동일한 requestCode 생성
-        int requestCode = Math.abs((medicineName + dayIndex + timeType).hashCode());
+        // setAlarm과 동일한 requestCode 생성 (약번호 기반)
+        int requestCode = Math.abs((medicineNo + dayIndex + timeType).hashCode());
 
         Intent intent = new Intent(context, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -107,7 +107,16 @@ public class AlarmHelper {
         alarmManager.cancel(pendingIntent);
         pendingIntent.cancel();
 
-        Log.d("AlarmHelper", "알람 취소됨: " + medicineName + " / 요일:" + dayIndex + " / 시간타입:" + timeType);
+        Log.d("AlarmHelper", "알람 취소됨: medicineNo=" + medicineNo + " / 요일:" + dayIndex + " / 시간타입:" + timeType);
+    }
+
+    public static void cancelAllAlarms(Context context, String medicineNo) {
+        for (int day = 0; day <= 6; day++) {
+            for (int timeType = 0; timeType <= 3; timeType++) {
+                cancelAlarm(context, medicineNo, String.valueOf(day), timeType);
+            }
+        }
+        Log.d("AlarmHelper", "전체 알람 취소됨: medicineNo=" + medicineNo);
     }
     // 0:월 ~ 6:일 → Calendar 요일 변환
     private static int convertToCalendarDay(int dayIndex) {

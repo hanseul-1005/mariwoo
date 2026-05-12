@@ -294,6 +294,8 @@ public class MedicineAddActivity extends AppCompatActivity {
                         if ("true".equals(result)) {
                             Toast.makeText(getApplicationContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show();
 
+                            String medicineNo = json.optString("medicine_no", "");
+
                             // 알람 설정 전 권한 체크
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                 AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -303,13 +305,13 @@ public class MedicineAddActivity extends AppCompatActivity {
                                             "알람 권한이 없어 알림이 설정되지 않았습니다.\n설정에서 권한을 허용해주세요.",
                                             Toast.LENGTH_LONG).show();
                                 } else {
-                                    setAlarms(name, weekday, intakeTime1, intakeType1,
+                                    setAlarms(name, medicineNo, weekday, intakeTime1, intakeType1,
                                             intakeTime2, intakeType2,
                                             intakeTime3, intakeType3,
                                             intakeTime4, intakeType4);
                                 }
                             } else {
-                                setAlarms(name, weekday, intakeTime1, intakeType1,
+                                setAlarms(name, medicineNo, weekday, intakeTime1, intakeType1,
                                         intakeTime2, intakeType2,
                                         intakeTime3, intakeType3,
                                         intakeTime4, intakeType4);
@@ -329,23 +331,23 @@ public class MedicineAddActivity extends AppCompatActivity {
         });
     }
 
-    private void setAlarms(String name, String weekday,
+    private void setAlarms(String name, String medicineNo, String weekday,
                            String intakeTime1, String intakeType1,
                            String intakeTime2, String intakeType2,
                            String intakeTime3, String intakeType3,
                            String intakeTime4, String intakeType4) {
 
         if (!intakeTime1.isEmpty()) {
-            AlarmHelper.setAlarm(getApplicationContext(), name, weekday, 0, intakeType1, intakeTime1);
+            AlarmHelper.setAlarm(getApplicationContext(), name, medicineNo, weekday, 0, intakeType1, intakeTime1);
         }
         if (!intakeTime2.isEmpty()) {
-            AlarmHelper.setAlarm(getApplicationContext(), name, weekday, 1, intakeType2, intakeTime2);
+            AlarmHelper.setAlarm(getApplicationContext(), name, medicineNo, weekday, 1, intakeType2, intakeTime2);
         }
         if (!intakeTime3.isEmpty()) {
-            AlarmHelper.setAlarm(getApplicationContext(), name, weekday, 2, intakeType3, intakeTime3);
+            AlarmHelper.setAlarm(getApplicationContext(), name, medicineNo, weekday, 2, intakeType3, intakeTime3);
         }
         if (!intakeTime4.isEmpty()) {
-            AlarmHelper.setAlarm(getApplicationContext(), name, weekday, 3, intakeType4, intakeTime4);
+            AlarmHelper.setAlarm(getApplicationContext(), name, medicineNo, weekday, 3, intakeType4, intakeTime4);
         }
     }
 
