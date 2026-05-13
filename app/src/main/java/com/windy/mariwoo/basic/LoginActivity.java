@@ -66,10 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // 시스템 바 패딩 처리 (edge-to-edge 레이아웃)
+        // 시스템 바 + 키보드(IME) 패딩 처리 (edge-to-edge 레이아웃)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            // 키보드가 올라오면 키보드 높이만큼, 아니면 시스템바 높이만큼 하단 패딩 적용
+            int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
         });
 
