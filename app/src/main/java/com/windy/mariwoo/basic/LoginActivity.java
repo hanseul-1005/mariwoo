@@ -114,6 +114,15 @@ public class LoginActivity extends AppCompatActivity {
                 login();
             }
         });
+
+        // 비밀번호 칸에서 완료(Done) 버튼 누르면 로그인 버튼 액션 실행
+        editPw.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                btnLogin.performClick();
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
