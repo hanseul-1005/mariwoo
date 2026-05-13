@@ -78,17 +78,24 @@ public class MedicineAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_medicine_add);
+        // 루트: systemBars 패딩만 적용 → 버튼은 제자리 유지
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
-            // 키보드가 올라오면 키보드 높이만큼, 아니면 시스템바 높이만큼 하단 패딩 적용
-            int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        // 스크롤 뷰: IME inset만큼 하단 패딩 → 키보드 등장 시 스크롤 영역만 축소
         NestedScrollView scrollView = findViewById(R.id.medicineAddActivity_scrollView);
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int imeExtra = Math.max(0, imeInsets.bottom - systemBars.bottom);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), imeExtra);
+            return insets;
+        });
+
+        // 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
         scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             View focused = scrollView.findFocus();
             if (focused != null) {

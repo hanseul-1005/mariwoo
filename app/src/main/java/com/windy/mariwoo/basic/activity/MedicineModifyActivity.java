@@ -2,7 +2,9 @@ package com.windy.mariwoo.basic.activity;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.View;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -88,10 +91,32 @@ public class MedicineModifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_medicine_modify);
+
+        // 루트: systemBars 패딩만 적용 → 버튼은 제자리 유지
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // 스크롤 뷰: IME inset만큼 하단 패딩 → 키보드 등장 시 스크롤 영역만 축소
+        NestedScrollView scrollView = findViewById(R.id.medicineModifyActivity_scrollView);
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int imeExtra = Math.max(0, imeInsets.bottom - systemBars.bottom);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), imeExtra);
+            return insets;
+        });
+
+        // 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = scrollView.findFocus();
+            if (focused != null) {
+                Rect rect = new Rect();
+                focused.getDrawingRect(rect);
+                scrollView.requestChildRectangleOnScreen(focused, rect, false);
+            }
         });
 
         serverUrl = getString(R.string.server_medicine);
