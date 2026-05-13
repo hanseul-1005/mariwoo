@@ -7,34 +7,38 @@
     android:layout_height="match_parent"
     tools:context=".basic.LoginActivity">
 
-    <!-- fillViewport="true": 콘텐츠가 짧아도 화면을 채워 로고/버튼 위치 유지 -->
+    <!--
+        fillViewport 제거 → 콘텐츠가 wrap_content 높이로 렌더링
+        키보드 등장 시 scrollView 높이 < 콘텐츠 높이 → 실제 스크롤 발생
+        → requestChildRectangleOnScreen으로 포커스된 EditText가 키보드 바로 위 위치
+    -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/loginActivity_scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/main_layout"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
             android:background="@color/login_background">
 
+            <!-- 로고 (상단 여백으로 중앙 위치 연출) -->
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/loginActivity_layout_info"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="100dp"
                 android:src="@drawable/img_logo"/>
 
+            <!-- 입력 및 버튼 영역 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/loginActivity_layout_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                style="loginLayout_login"
+                android:layout_marginTop="80dp"
                 android:layout_marginBottom="50dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -162,7 +166,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

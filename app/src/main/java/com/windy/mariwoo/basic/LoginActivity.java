@@ -68,14 +68,15 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // 루트: systemBars 패딩만 적용 → 키보드가 올라와도 버튼은 제자리 유지
+        // 루트: systemBars 패딩만 적용
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // 스크롤 뷰: IME inset만큼 하단 패딩 추가 → 키보드가 올라오면 스크롤 영역만 축소
+        // 스크롤 뷰: IME inset만큼 하단 패딩 → 키보드 등장 시 스크롤 영역 축소
+        // (SignActivity와 동일한 방식)
         NestedScrollView scrollView = findViewById(R.id.loginActivity_scrollView);
         ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
             Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
@@ -85,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        // 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤 (SignActivity와 동일)
         scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             View focused = scrollView.findFocus();
             if (focused != null) {
