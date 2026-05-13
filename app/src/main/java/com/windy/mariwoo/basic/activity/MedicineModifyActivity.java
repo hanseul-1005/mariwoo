@@ -1,7 +1,6 @@
 package com.windy.mariwoo.basic.activity;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.windy.mariwoo.R;
 import com.windy.mariwoo.basic.helper.AlarmHelper;
 
@@ -224,7 +225,8 @@ public class MedicineModifyActivity extends AppCompatActivity {
     }
 
     /**
-     * 시간 선택 다이얼로그 (24시간제)
+     * 시간 선택 다이얼로그 (MaterialTimePicker, 24시간제 키보드 입력)
+     * AddActivity와 동일한 방식
      * @param targetTextView 선택된 시간을 표시할 TextView
      */
     private void showTimePicker(TextView targetTextView) {
@@ -232,13 +234,21 @@ public class MedicineModifyActivity extends AppCompatActivity {
         int hour   = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
-        new TimePickerDialog(this,
-                (view, selectedHour, selectedMinute) -> {
-                    // HH:mm 포맷으로 TextView에 시간 설정
-                    String time = String.format("%02d:%02d", selectedHour, selectedMinute);
-                    targetTextView.setText(time);
-                },
-                hour, minute, true).show(); // true = 24시간제
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD) // 키보드 입력 모드
+                .setTimeFormat(TimeFormat.CLOCK_24H)                  // 24시간제
+                .setHour(hour)
+                .setMinute(minute)
+                .setTitleText("시간 선택")
+                .build();
+
+        picker.addOnPositiveButtonClickListener(v -> {
+            // HH:mm 포맷으로 TextView에 시간 설정
+            String time = String.format("%02d:%02d", picker.getHour(), picker.getMinute());
+            targetTextView.setText(time);
+        });
+
+        picker.show(getSupportFragmentManager(), "time_picker");
     }
 
     /**
