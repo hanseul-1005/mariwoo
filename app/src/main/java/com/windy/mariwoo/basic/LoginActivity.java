@@ -3,6 +3,7 @@ package com.windy.mariwoo.basic;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -74,6 +75,17 @@ public class LoginActivity extends AppCompatActivity {
             int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
+        });
+
+        // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        View rootView = findViewById(R.id.main);
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = rootView.findFocus();
+            if (focused != null) {
+                Rect rect = new Rect();
+                focused.getDrawingRect(rect);
+                focused.requestRectangleOnScreen(rect, false);
+            }
         });
 
         // 다크 모드 비활성화
