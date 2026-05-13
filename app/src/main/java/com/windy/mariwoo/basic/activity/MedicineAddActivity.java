@@ -78,7 +78,10 @@ public class MedicineAddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_medicine_add);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            // 키보드가 올라오면 키보드 높이만큼, 아니면 시스템바 높이만큼 하단 패딩 적용
+            int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
         });
 
