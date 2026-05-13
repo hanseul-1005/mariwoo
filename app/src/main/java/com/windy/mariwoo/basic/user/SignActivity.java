@@ -118,17 +118,26 @@ public class SignActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign);
 
-        // 시스템 바 + 키보드(IME) 패딩 처리
+        // 루트: systemBars 패딩만 적용 → 키보드가 올라와도 버튼은 제자리 유지
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // 스크롤 뷰: IME inset만큼 하단 패딩 추가 → 키보드가 올라오면 스크롤 영역만 축소
+        NestedScrollView scrollView = findViewById(R.id.signActivity_scrollView);
+        int basePaddingPx = (int) (10 * getResources().getDisplayMetrics().density); // XML paddingBottom 10dp
+        ViewCompat.setOnApplyWindowInsetsListener(scrollView, (v, insets) -> {
             Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
-            int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // 키보드 높이에서 systemBars 높이를 뺀 만큼만 추가 패딩 적용
+            int imeExtra = Math.max(0, imeInsets.bottom - systemBars.bottom);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), basePaddingPx + imeExtra);
             return insets;
         });
 
         // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
-        NestedScrollView scrollView = findViewById(R.id.signActivity_scrollView);
         scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             View focused = scrollView.findFocus();
             if (focused != null) {
