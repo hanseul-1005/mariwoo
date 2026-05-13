@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
@@ -78,13 +79,13 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
-        View rootView = findViewById(R.id.main);
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
-            View focused = rootView.findFocus();
+        NestedScrollView scrollView = findViewById(R.id.loginActivity_scrollView);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = scrollView.findFocus();
             if (focused != null) {
                 Rect rect = new Rect();
                 focused.getDrawingRect(rect);
-                focused.requestRectangleOnScreen(rect, false);
+                scrollView.requestChildRectangleOnScreen(focused, rect, false);
             }
         });
 
