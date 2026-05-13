@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.widget.NestedScrollView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -83,6 +85,17 @@ public class MedicineAddActivity extends AppCompatActivity {
             int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
+        });
+
+        // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        NestedScrollView scrollView = findViewById(R.id.medicineAddActivity_scrollView);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = scrollView.findFocus();
+            if (focused != null) {
+                Rect rect = new Rect();
+                focused.getDrawingRect(rect);
+                scrollView.requestChildRectangleOnScreen(focused, rect, false);
+            }
         });
 
         serverUrl = getString(R.string.server_medicine);

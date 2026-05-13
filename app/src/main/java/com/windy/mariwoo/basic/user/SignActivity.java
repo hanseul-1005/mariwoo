@@ -2,6 +2,7 @@ package com.windy.mariwoo.basic.user;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -123,6 +125,17 @@ public class SignActivity extends AppCompatActivity {
             int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
+        });
+
+        // 키보드가 올라올 때 포커스된 EditText가 키보드 바로 위에 오도록 자동 스크롤
+        NestedScrollView scrollView = findViewById(R.id.signActivity_scrollView);
+        scrollView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            View focused = scrollView.findFocus();
+            if (focused != null) {
+                Rect rect = new Rect();
+                focused.getDrawingRect(rect);
+                scrollView.requestChildRectangleOnScreen(focused, rect, false);
+            }
         });
 
         // 다크 모드 비활성화
