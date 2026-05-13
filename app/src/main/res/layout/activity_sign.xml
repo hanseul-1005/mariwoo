@@ -46,17 +46,24 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/signActivity_layout_top"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="15dp"
             android:background="@color/base_background">
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/signActivity_scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/signActivity_button_sign"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp"
+                android:clipToPadding="false">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/signActivity_layout_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/signActivity_button_sign">
+                android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/signActivity_layout_id"
@@ -91,7 +98,11 @@
                                 android:layout_height="match_parent"
                                 android:background="@null"
                                 style="@style/loginActivity_editText_info"
-                                android:hint="아이디를 입력하세요"/>
+                                android:hint="아이디를 입력하세요"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:imeOptions="actionNext"
+                                android:nextFocusDown="@+id/signActivity_editText_pw"/>
 
                         </LinearLayout>
 
@@ -148,7 +159,11 @@
                             android:layout_height="match_parent"
                             android:background="@null"
                             style="@style/loginActivity_editText_info"
-                            android:hint="비밀번호를 입력하세요"/>
+                            android:hint="비밀번호를 입력하세요"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/signActivity_editText_chk_pw"/>
 
                     </LinearLayout>
 
@@ -186,7 +201,11 @@
                             android:layout_height="match_parent"
                             android:background="@null"
                             style="@style/loginActivity_editText_info"
-                            android:hint="비밀번호를 한 번 더 입력하세요"/>
+                            android:hint="비밀번호를 한 번 더 입력하세요"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/signActivity_editText_name"/>
 
                     </LinearLayout>
 
@@ -233,7 +252,11 @@
                             android:layout_height="match_parent"
                             android:background="@null"
                             style="@style/loginActivity_editText_info"
-                            android:hint="이름을 입력하세요"/>
+                            android:hint="이름을 입력하세요"
+                            android:inputType="textPersonName"
+                            android:maxLines="1"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/signActivity_editText_tel"/>
 
                     </LinearLayout>
 
@@ -271,8 +294,11 @@
                             android:background="@null"
                             style="@style/loginActivity_editText_info"
                             android:inputType="phone"
+                            android:maxLines="1"
                             android:maxLength="13"
-                            android:hint="연락처를 입력하세요"/>
+                            android:hint="연락처를 입력하세요"
+                            android:imeOptions="actionNext"
+                            android:nextFocusDown="@+id/signActivity_textField_email"/>
 
                     </LinearLayout>
 
@@ -317,6 +343,8 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:inputType="textEmailAddress"
+                                    android:maxLines="1"
+                                    android:imeOptions="actionDone"
                                     android:textSize="14sp"
                                     android:background="@drawable/layout_border_radius5"
                                     android:paddingTop="2dp"
@@ -365,6 +393,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:inputType="textEmailAddress"
+                                android:maxLines="1"
+                                android:imeOptions="actionDone"
                                 android:textSize="14sp"
                                 android:paddingTop="2dp"
                                 android:paddingBottom="2dp"
@@ -505,17 +535,23 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            </androidx.core.widget.NestedScrollView>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/signActivity_button_sign"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:text="회원가입"
                 android:textColor="@color/white"
                 android:textSize="15dp"
                 android:textStyle="bold"
                 android:background="@drawable/button_radius15_bg_theme"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

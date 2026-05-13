@@ -116,10 +116,12 @@ public class SignActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign);
 
-        // 시스템 바 패딩 처리
+        // 시스템 바 + 키보드(IME) 패딩 처리
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets imeInsets  = insets.getInsets(WindowInsetsCompat.Type.ime());
+            int bottomPadding = Math.max(systemBars.bottom, imeInsets.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding);
             return insets;
         });
 
@@ -304,6 +306,24 @@ public class SignActivity extends AppCompatActivity {
             public void onClick(View v) {
                 check();
             }
+        });
+
+        // 이메일 입력 칸에서 Done 버튼 → 회원가입 버튼 액션 실행
+        editEmail.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                btnSign.performClick();
+                return true;
+            }
+            return false;
+        });
+
+        // 도메인 직접입력 칸에서 Done 버튼 → 회원가입 버튼 액션 실행
+        editAddrDirect.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                btnSign.performClick();
+                return true;
+            }
+            return false;
         });
     }
 
