@@ -68,8 +68,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // AlarmActivity 실행 Intent
         Intent alarmIntent = new Intent(context, AlarmActivity.class);
-        alarmIntent.putExtra("medicine_names", displayList);  // ArrayList<String>
-        alarmIntent.putExtra("time_type",      timeTypeName);
+        alarmIntent.putStringArrayListExtra("medicine_names", displayList); // ArrayList<String>
+        alarmIntent.putExtra("time_type", timeTypeName);
         alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 
         // fullScreenIntent용 PendingIntent

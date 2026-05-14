@@ -28,9 +28,8 @@ import java.util.ArrayList;
  *   - "확인" 버튼 클릭 → 모든 알림 취소 후 LoginActivity로 이동
  *
  * Intent 수신 데이터:
- *   - medicine_name : 약 이름 (예: "타이레놀")
- *   - intake_type   : 식전/식후
- *   - time_type     : 아침/점심/저녁/취침 전
+ *   - medicine_names : 약 이름 목록 ArrayList<String> (예: ["타이레놀 (식후)", "아스피린 (식전)"])
+ *   - time_type      : 아침/점심/저녁/취침 전
  *
  * 주의:
  *   - AlarmActivity가 이미 떠있을 때 새 알람이 오면 onNewIntent()에서 처리
