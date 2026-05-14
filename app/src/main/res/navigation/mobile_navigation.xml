@@ -7,43 +7,43 @@
 
     <fragment
         android:id="@+id/nav_medicine_list"
-        android:name="com.windy.mariwoo.basic.ui.medicineList.MedicineListFragment"
+        android:name="kr.windy.mariwoo.basic.ui.medicineList.MedicineListFragment"
         android:label="@string/menu_medicine_list"
         tools:layout="@layout/fragment_medicine_list" />
 
     <fragment
         android:id="@+id/nav_medicine_intake_list"
-        android:name="com.windy.mariwoo.basic.ui.medicineIntake.MedicineIntakeFragment"
+        android:name="kr.windy.mariwoo.basic.ui.medicineIntake.MedicineIntakeFragment"
         android:label="@string/menu_medicine_intake"
         tools:layout="@layout/fragment_medicine_intake" />
 
     <fragment
         android:id="@+id/nav_relation_list"
-        android:name="com.windy.mariwoo.basic.ui.relationList.RelationListFragment"
+        android:name="kr.windy.mariwoo.basic.ui.relationList.RelationListFragment"
         android:label="@string/menu_relation_list"
         tools:layout="@layout/fragment_relation_list" />
 
     <fragment
         android:id="@+id/nav_relation_intake_list"
-        android:name="com.windy.mariwoo.basic.ui.relationIntake.RelationIntakeFragment"
+        android:name="kr.windy.mariwoo.basic.ui.relationIntake.RelationIntakeFragment"
         android:label="@string/menu_relation_intake"
         tools:layout="@layout/fragment_relation_intake" />
 
     <fragment
         android:id="@+id/nav_medicine_calendar"
-        android:name="com.windy.mariwoo.basic.ui.medicineCalendar.MedicineCalendarFragment"
+        android:name="kr.windy.mariwoo.basic.ui.medicineCalendar.MedicineCalendarFragment"
         android:label="복용 내역 달력 조회"
         tools:layout="@layout/fragment_medicine_calendar" />
 
     <fragment
         android:id="@+id/nav_change_info"
-        android:name="com.windy.mariwoo.basic.ui.changeInfo.ChangeInfoFragment"
+        android:name="kr.windy.mariwoo.basic.ui.changeInfo.ChangeInfoFragment"
         android:label="@string/menu_change_info"
         tools:layout="@layout/fragment_change_info" />
 
     <fragment
         android:id="@+id/nav_change_pw"
-        android:name="com.windy.mariwoo.basic.ui.changePw.ChangePwFragment"
+        android:name="kr.windy.mariwoo.basic.ui.changePw.ChangePwFragment"
         android:label="@string/menu_change_pw"
         tools:layout="@layout/fragment_change_pw" />
 
