@@ -100,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // 알람 확인 후 진입 시 복용 체크 Fragment로 이동
+        int navigateTo = getIntent().getIntExtra("navigate_to", -1);
+        if (navigateTo != -1) {
+            navController.navigate(navigateTo);
+        }
+
         // 권한 요청은 SplashActivity에서 처리됨
     }
 

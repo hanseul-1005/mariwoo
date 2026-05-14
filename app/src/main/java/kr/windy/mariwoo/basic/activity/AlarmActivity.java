@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import kr.windy.mariwoo.R;
-import kr.windy.mariwoo.basic.LoginActivity;
+import kr.windy.mariwoo.basic.MainActivity;
 
 /**
  * 약 복용 알람 Activity
@@ -106,14 +106,15 @@ public class AlarmActivity extends AppCompatActivity {
         tvTitle.setText("💊 약 복용 시간입니다!");
         tvInfo.setText(timeType + " " + intakeType + "\n" + medicineName);
 
-        // 확인 버튼 → 알림 전체 취소 후 로그인 화면으로 이동
+        // 확인 버튼 → 알림 전체 취소 후 복용 체크 화면으로 이동
         btnConfirm.setOnClickListener(v -> {
             NotificationManager manager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancelAll(); // 모든 알림 취소
 
-            Intent intent2 = new Intent(AlarmActivity.this, LoginActivity.class);
+            Intent intent2 = new Intent(AlarmActivity.this, MainActivity.class);
             intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent2.putExtra("navigate_to", R.id.nav_medicine_intake_list);
             startActivity(intent2);
             finish();
         });
