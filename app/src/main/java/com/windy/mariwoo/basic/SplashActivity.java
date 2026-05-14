@@ -1,10 +1,17 @@
 package com.windy.mariwoo.basic;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
@@ -31,20 +38,26 @@ import okhttp3.Response;
  * 스플래시 Activity
  *
  * 동작 흐름:
- *   1. SharedPreferences에서 저장된 ID/PW 확인
- *   2. 저장된 정보 있음 → 자동 로그인 시도
- *        - 성공: MainActivity로 이동
- *        - 실패: LoginActivity로 이동
- *   3. 저장된 정보 없음 → 2초 후 LoginActivity로 이동
+ *   1. 권한 요청 (알림 → 전체화면 알림)
+ *   2. 권한 처리 완료 후 자동 로그인 체크
+ *        - 저장된 ID/PW 있음 → 로그인 시도
+ *            - 성공: MainActivity로 이동
+ *            - 실패: LoginActivity로 이동
+ *        - 저장된 ID/PW 없음 → 2초 후 LoginActivity로 이동
  *
  * AndroidManifest.xml에서 launcher Activity로 설정됨
  */
 public class SplashActivity extends AppCompatActivity {
 
+    private static final int REQ_NOTIFICATION = 1001;
+
     private SharedPreferences sharedPreferences;
     private String userId    = "";
     private String userPw    = "";
     private String serverUrl = "";
+
+    /** 전체화면 알림 권한 설정 화면을 열었는지 여부 (onResume에서 재진입 감지용) */
+    private boolean launchedSettings = false;
 
     private final OkHttpClient client = new OkHttpClient();
 
@@ -66,11 +79,82 @@ public class SplashActivity extends AppCompatActivity {
         userId = sharedPreferences.getString("user_id", "");
         userPw = sharedPreferences.getString("user_pw", "");
 
+        // 권한 요청부터 시작
+        startPermissionFlow();
+    }
+
+    // ──────────────────────────────────────────────
+    // 권한 처리 흐름
+    // ──────────────────────────────────────────────
+
+    /**
+     * Step 1: 알림 권한 요청 (Android 13+)
+     * 이미 허용됐거나 미만 버전이면 바로 Step 2로 진행
+     */
+    private void startPermissionFlow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATION);
+                return; // onRequestPermissionsResult에서 Step 2 진행
+            }
+        }
+        checkFullScreenIntentPermission();
+    }
+
+    /** 알림 권한 결과 수신 → Step 2로 진행 */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_NOTIFICATION) {
+            checkFullScreenIntentPermission();
+        }
+    }
+
+    /**
+     * Step 2: 전체화면 알림 권한 확인 (Android 14+)
+     * 권한 없으면 시스템 설정 화면으로 이동, 돌아오면 onResume에서 Step 3 진행
+     * 이미 허용됐거나 미만 버전이면 바로 Step 3으로 진행
+     */
+    private void checkFullScreenIntentPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager manager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!manager.canUseFullScreenIntent()) {
+                launchedSettings = true;
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                return; // onResume에서 Step 3 진행
+            }
+        }
+        startAutoLoginFlow();
+    }
+
+    /** 설정 화면에서 돌아왔을 때 Step 3 진행 */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (launchedSettings) {
+            launchedSettings = false;
+            startAutoLoginFlow();
+        }
+    }
+
+    // ──────────────────────────────────────────────
+    // Step 3: 자동 로그인 처리
+    // ──────────────────────────────────────────────
+
+    /**
+     * 저장된 ID/PW로 자동 로그인 시도
+     * 없으면 2초 후 로그인 화면으로 이동
+     */
+    private void startAutoLoginFlow() {
         if (!"".equals(userId) && !"".equals(userPw)) {
-            // 저장된 정보 있음 → 자동 로그인 시도 (네트워크 응답 후 화면 전환)
             login();
         } else {
-            // 저장된 정보 없음 → 2초 후 로그인 화면으로 이동
             new Handler().postDelayed(this::goToLogin, 2000);
         }
     }

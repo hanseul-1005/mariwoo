@@ -1,13 +1,8 @@
 package com.windy.mariwoo.basic;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
@@ -106,25 +101,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Android 13 (TIRAMISU) 이상 → 알림 권한 요청
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(
-                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
-            }
-        }
-
-        // Android 14 (UPSIDE_DOWN_CAKE) 이상 → 전체 화면 알림 권한 요청
-        // 알람 Activity가 잠금 화면 위에 표시되려면 필요
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (!manager.canUseFullScreenIntent()) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
-                intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
-            }
-        }
+        // 권한 요청은 SplashActivity에서 처리됨
     }
 
     /**
