@@ -244,9 +244,9 @@ public class MedicineListFragment extends Fragment {
                             }
 
                         } else {
-                            Toast.makeText(getContext(),
-                                    "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.",
-                                    Toast.LENGTH_SHORT).show();
+                            // 해당 요일에 약이 없는 경우 → 목록 비우기
+                            listMedicineName.clear();
+                            if (outerAdapter != null) outerAdapter.notifyDataSetChanged();
                         }
 
                     } catch (Exception e) {
