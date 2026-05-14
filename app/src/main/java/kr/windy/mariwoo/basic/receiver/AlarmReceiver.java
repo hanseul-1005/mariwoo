@@ -15,46 +15,67 @@ import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.activity.AlarmActivity;
 import kr.windy.mariwoo.basic.helper.AlarmHelper;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 /**
  * 약 복용 알람 수신 BroadcastReceiver
  *
  * 동작 흐름:
- *   1. AlarmHelper.setAlarm()이 등록한 알람 시간이 되면 이 클래스의 onReceive() 호출
- *   2. AlarmActivity를 fullScreenIntent로 띄워 화면 위에 알람 표시
- *   3. 다른 앱 위에 표시 권한이 있으면 Activity를 직접 실행
- *   4. 다음 주 동일 요일/시간에 알람 재등록 (주간 반복 구현)
+ *   1. AlarmHelper.setAlarm()이 등록한 알람 시간이 되면 onReceive() 호출
+ *   2. SharedPreferences에서 해당 슬롯의 약 목록 전체를 읽어 AlarmActivity에 전달
+ *   3. 같은 시간에 여러 약이 있어도 AlarmActivity를 한 번만 실행 (묶어서 표시)
+ *   4. 다음 주 동일 슬롯으로 알람 재등록 (주간 반복)
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    // 알림 채널 ID (Android 8.0 이상 필수)
     private static final String CHANNEL_ID = "medicine_alarm_channel";
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        // AlarmHelper.setAlarm()에서 putExtra로 담아준 데이터 꺼내기
-        String medicineName  = intent.getStringExtra("medicine_name");   // 약 이름 (알림 표시용)
-        String medicineNo    = intent.getStringExtra("medicine_no");     // 약 번호 (재등록 requestCode용)
-        String intakeType    = intent.getStringExtra("intake_type");     // 식전/식후
-        String timeType      = intent.getStringExtra("time_type");       // 아침/점심/저녁/취침 전
-        String weekday       = intent.getStringExtra("weekday");         // 요일 (재등록용)
-        String time          = intent.getStringExtra("time");            // HH:mm (재등록용)
+        // 슬롯 정보 꺼내기
+        String slotKey       = intent.getStringExtra("slot_key");       // SharedPreferences 키
+        String weekday       = intent.getStringExtra("weekday");        // 요일 (재등록용)
+        String time          = intent.getStringExtra("time");           // HH:mm (재등록용)
         int    timeTypeIndex = intent.getIntExtra("time_type_index", 0); // 시간대 인덱스 (재등록용)
+        String timeTypeName  = intent.getStringExtra("time_type");      // 아침/점심/저녁/취침 전 (표시용)
 
-        Log.d("AlarmReceiver", "알람 수신됨! " + medicineName);
+        Log.d("AlarmReceiver", "알람 수신됨! 슬롯: " + slotKey);
 
-        // AlarmActivity를 fullScreenIntent 대상으로 설정
-        // FLAG_ACTIVITY_NO_USER_ACTION: 사용자 동작 없이 Activity 실행 허용
+        // SharedPreferences에서 이 슬롯의 약 목록 읽기
+        // 형식: Set<"medicineNo||medicineName||intakeType">
+        Set<String> medicineSet = AlarmHelper.getMedicineSet(context, slotKey);
+
+        // AlarmActivity에 넘길 표시용 문자열 목록 구성: "약이름 (식전/식후)"
+        ArrayList<String> displayList = new ArrayList<>();
+        StringBuilder     notifText   = new StringBuilder();
+
+        for (String entry : medicineSet) {
+            String[] parts = entry.split("\\|\\|");
+            if (parts.length < 3) continue;
+            String name   = parts[1];
+            String intake = parts[2];
+            displayList.add(name + " (" + intake + ")");
+            if (notifText.length() > 0) notifText.append(", ");
+            notifText.append(name);
+        }
+
+        if (displayList.isEmpty()) {
+            Log.d("AlarmReceiver", "슬롯에 약이 없음, 알람 무시");
+            return;
+        }
+
+        // AlarmActivity 실행 Intent
         Intent alarmIntent = new Intent(context, AlarmActivity.class);
-        alarmIntent.putExtra("medicine_name", medicineName);
-        alarmIntent.putExtra("intake_type",   intakeType);
-        alarmIntent.putExtra("time_type",     timeType);
+        alarmIntent.putExtra("medicine_names", displayList);  // ArrayList<String>
+        alarmIntent.putExtra("time_type",      timeTypeName);
         alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 
-        // fullScreenIntent용 PendingIntent (잠금화면/다른 앱 위에 표시)
+        // fullScreenIntent용 PendingIntent
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
                 context,
-                (int) System.currentTimeMillis(), // 유니크한 requestCode
+                (int) System.currentTimeMillis(),
                 alarmIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -62,41 +83,39 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // 다른 앱 위에 표시 권한이 있으면 AlarmActivity 직접 실행
+        // 오버레이 권한 있으면 AlarmActivity 직접 실행
         if (android.provider.Settings.canDrawOverlays(context)) {
             context.startActivity(alarmIntent);
         }
 
-        // Android 8.0 이상: 알림 채널 생성 (채널 없으면 알림 표시 불가)
+        // 알림 채널 생성 (Android 8.0 이상)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "약 복용 알림",
-                    NotificationManager.IMPORTANCE_HIGH // 소리 + 헤드업 알림
-            );
-            channel.setShowBadge(true);    // 앱 아이콘 배지 표시
-            channel.enableVibration(true); // 진동 활성화
+                    CHANNEL_ID, "약 복용 알림", NotificationManager.IMPORTANCE_HIGH);
+            channel.setShowBadge(true);
+            channel.enableVibration(true);
             manager.createNotificationChannel(channel);
         }
 
-        // 알림 빌드
+        // 알림 표시 텍스트 (여러 약이면 쉼표로 나열)
+        String notifBody = timeTypeName + " - " + notifText.toString();
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_medicine)
                 .setContentTitle("💊 약 복용 시간입니다!")
-                .setContentText(timeType + " " + intakeType + " - " + medicineName)
-                .setPriority(NotificationCompat.PRIORITY_MAX)      // 최고 우선순위
-                .setCategory(NotificationCompat.CATEGORY_ALARM)    // 알람 카테고리
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC) // 잠금화면에도 표시
-                .setFullScreenIntent(fullScreenPendingIntent, true)  // 전체화면 인텐트
-                .setAutoCancel(true); // 탭하면 알림 자동 제거
+                .setContentText(notifBody)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notifBody)) // 긴 텍스트 펼침
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setAutoCancel(true);
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
 
-        // 다음 주 동일 요일/시간으로 알람 재등록 (주간 반복)
-        // weekday는 단일 요일 값 (AlarmHelper에서 재등록 시 쉼표 구분 없이 단일 값 전달)
-        if (medicineName != null && medicineNo != null && weekday != null && time != null) {
-            AlarmHelper.setAlarm(context, medicineName, medicineNo,
-                    weekday, timeTypeIndex, intakeType, time);
+        // 다음 주 동일 슬롯으로 알람 재등록 (약 목록은 SharedPreferences에서 그대로 유지)
+        if (slotKey != null && weekday != null && time != null) {
+            AlarmHelper.reRegisterAlarm(context, slotKey, weekday, timeTypeIndex, time);
         }
     }
 }

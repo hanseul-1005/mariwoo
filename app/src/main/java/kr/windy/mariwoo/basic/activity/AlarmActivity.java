@@ -16,6 +16,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.MainActivity;
 
+import java.util.ArrayList;
+
 /**
  * 약 복용 알람 Activity
  *
@@ -89,14 +91,12 @@ public class AlarmActivity extends AppCompatActivity {
             return;
         }
 
-        // Intent에서 알람 정보 추출
-        String medicineName = intent.getStringExtra("medicine_name"); // 약 이름
-        String intakeType   = intent.getStringExtra("intake_type");   // 식전/식후
-        String timeType     = intent.getStringExtra("time_type");     // 아침/점심/저녁/취침 전
+        // Intent에서 약 목록과 시간대 정보 추출
+        ArrayList<String> medicineNames = intent.getStringArrayListExtra("medicine_names");
+        String            timeType      = intent.getStringExtra("time_type");
 
-        Log.d("AlarmActivity", "medicineName: " + medicineName);
-        Log.d("AlarmActivity", "intakeType: "   + intakeType);
-        Log.d("AlarmActivity", "timeType: "     + timeType);
+        Log.d("AlarmActivity", "시간대: " + timeType + " / 약 수: "
+                + (medicineNames != null ? medicineNames.size() : 0));
 
         // UI 표시
         TextView         tvTitle    = findViewById(R.id.alarmActivity_text_title);
@@ -104,7 +104,16 @@ public class AlarmActivity extends AppCompatActivity {
         AppCompatButton  btnConfirm = findViewById(R.id.alarmActivity_button_confirm);
 
         tvTitle.setText("💊 약 복용 시간입니다!");
-        tvInfo.setText(timeType + " " + intakeType + "\n" + medicineName);
+
+        // 시간대 + 약 목록 표시 (여러 약이면 bullet 목록으로)
+        StringBuilder sb = new StringBuilder();
+        if (timeType != null) sb.append(timeType).append("\n\n");
+        if (medicineNames != null) {
+            for (String name : medicineNames) {
+                sb.append("• ").append(name).append("\n");
+            }
+        }
+        tvInfo.setText(sb.toString().trim());
 
         // 확인 버튼 → 알림 전체 취소 후 복용 체크 화면으로 이동
         btnConfirm.setOnClickListener(v -> {
