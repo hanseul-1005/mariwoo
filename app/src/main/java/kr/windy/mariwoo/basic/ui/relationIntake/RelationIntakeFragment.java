@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.adapter.MedicineOuterAdapter;
 import kr.windy.mariwoo.basic.model.MedicineModel;
 

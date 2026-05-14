@@ -11,7 +11,7 @@ import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.activity.AlarmActivity;
 import kr.windy.mariwoo.basic.helper.AlarmHelper;
 

@@ -19,8 +19,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.windy.mariwoo.R;
-import com.windy.mariwoo.databinding.FragmentChangePwBinding;
+import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.databinding.FragmentChangePwBinding;
 
 import org.json.JSONObject;
 

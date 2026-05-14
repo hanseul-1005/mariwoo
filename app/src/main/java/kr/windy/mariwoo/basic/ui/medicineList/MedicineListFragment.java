@@ -23,12 +23,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.activity.MedicineAddActivity;
 import kr.windy.mariwoo.basic.activity.MedicineModifyActivity;
 import kr.windy.mariwoo.basic.adapter.MedicineOuterAdapter;
 import kr.windy.mariwoo.basic.model.MedicineModel;
-import com.windy.mariwoo.databinding.FragmentMedicineListBinding;
+import kr.windy.mariwoo.databinding.FragmentMedicineListBinding;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

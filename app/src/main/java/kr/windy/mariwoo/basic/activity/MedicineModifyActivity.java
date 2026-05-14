@@ -23,7 +23,7 @@ import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.helper.AlarmHelper;
 
 import org.json.JSONArray;

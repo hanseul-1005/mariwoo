@@ -8,7 +8,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.model.MedicineCardItem;
 
 import java.util.List;

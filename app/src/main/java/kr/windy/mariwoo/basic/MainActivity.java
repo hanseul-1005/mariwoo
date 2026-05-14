@@ -17,8 +17,8 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.windy.mariwoo.R;
-import com.windy.mariwoo.databinding.ActivityMainBinding;
+import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.databinding.ActivityMainBinding;
 
 /**
  * 메인 Activity (Navigation Drawer 기반)

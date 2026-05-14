@@ -20,11 +20,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.activity.RelationAddActivity;
 import kr.windy.mariwoo.basic.adapter.RelationOuterAdapter;
 import kr.windy.mariwoo.basic.model.RelationModel;
-import com.windy.mariwoo.databinding.FragmentRelationListBinding;
+import kr.windy.mariwoo.databinding.FragmentRelationListBinding;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

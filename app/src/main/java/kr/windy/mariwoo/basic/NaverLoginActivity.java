@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.navercorp.nid.NaverIdLoginSDK;
 import com.navercorp.nid.oauth.OAuthLoginCallback;
 import com.navercorp.nid.oauth.view.NidOAuthLoginButton;
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 
 public class NaverLoginActivity extends AppCompatActivity {
 

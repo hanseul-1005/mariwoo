@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.windy.mariwoo.R;
+import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.adapter.MedicineCardAdapter;
 import kr.windy.mariwoo.basic.model.MedicineCardItem;
 import kr.windy.mariwoo.basic.model.MedicineScheduleItem;

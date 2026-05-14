@@ -26,8 +26,8 @@ import com.google.android.material.datepicker.DateValidatorPointBackward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.windy.mariwoo.R;
-import com.windy.mariwoo.databinding.FragmentChangeInfoBinding;
+import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.databinding.FragmentChangeInfoBinding;
 
 import org.json.JSONObject;
 
