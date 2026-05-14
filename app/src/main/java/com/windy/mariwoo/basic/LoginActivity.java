@@ -38,14 +38,11 @@ import okhttp3.Response;
  * 로그인 Activity
  *
  * 동작 흐름:
- *   1. onCreate → SharedPreferences에 저장된 ID/PW 확인
- *   2. 저장된 정보가 있으면 자동 로그인 (login() 즉시 호출)
- *   3. 로그인 성공 → MainActivity로 이동, SharedPreferences에 사용자 정보 저장
- *   4. 로그인 실패 → 안내 토스트 표시
+ *   1. 아이디/비밀번호 입력 후 로그인 버튼 클릭 (또는 Done 키)
+ *   2. 로그인 성공 → MainActivity로 이동, SharedPreferences에 사용자 정보 저장
+ *   3. 로그인 실패 → 안내 토스트 표시
  *
- * 자동 로그인:
- *   - SharedPreferences "autoLogin" 키: user_id, user_pw
- *   - 둘 다 비어 있지 않으면 자동으로 login() 호출
+ * 자동 로그인은 SplashActivity에서 처리됨
  */
 public class LoginActivity extends AppCompatActivity {
 
@@ -101,18 +98,11 @@ public class LoginActivity extends AppCompatActivity {
 
         serverUrl = getString(R.string.server_user);
 
-        // 자동 로그인용 SharedPreferences 로드
+        // SharedPreferences (로그인 성공 후 사용자 정보 저장용)
         sharedPreferences = getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
-        userId = sharedPreferences.getString("user_id", "");
-        userPw = sharedPreferences.getString("user_pw", "");
 
         editId = findViewById(R.id.loginActivity_editText_id);
         editPw = findViewById(R.id.loginActivity_editText_pw);
-
-        // 저장된 ID/PW가 있으면 자동 로그인 시도
-        if (!"".equals(userId) && !"".equals(userPw)) {
-            login();
-        }
 
         // 회원가입 화면 이동
         btnSign = findViewById(R.id.loginActivity_button_sign);
