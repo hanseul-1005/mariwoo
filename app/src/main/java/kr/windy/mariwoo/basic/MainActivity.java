@@ -18,6 +18,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.basic.helper.AlarmHelper;
 import kr.windy.mariwoo.databinding.ActivityMainBinding;
 
 /**
@@ -86,13 +87,15 @@ public class MainActivity extends AppCompatActivity {
         TextView navUserName = headerView.findViewById(R.id.navHeaderMain_textView_name);
         navUserName.setText("test"); // TODO: SharedPreferences에서 실제 사용자 이름으로 설정
 
-        // 로그아웃 버튼 → SharedPreferences 초기화 후 LoginActivity로 이동
+        // 로그아웃 버튼 → 알람 전체 취소 + SharedPreferences 초기화 후 LoginActivity로 이동
         Button btnLogout = headerView.findViewById(R.id.header_btn_logout);
         btnLogout.setOnClickListener(v -> {
+            // 등록된 모든 알람 취소
+            AlarmHelper.cancelAllAlarmsForAllMedicines(this);
+
+            // 자동 로그인 정보 전체 삭제
             SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.clear(); // 자동 로그인 정보 전체 삭제
-            editor.apply();
+            sharedPreferences.edit().clear().apply();
 
             // 로그인 화면으로 이동 (백스택 전부 제거하여 뒤로가기 방지)
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);

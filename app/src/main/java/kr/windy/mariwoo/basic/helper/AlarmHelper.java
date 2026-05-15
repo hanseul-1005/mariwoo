@@ -251,6 +251,26 @@ public class AlarmHelper {
         Log.d("AlarmHelper", "전체 알람 취소됨: medicineNo=" + medicineNo);
     }
 
+    /**
+     * 모든 슬롯의 알람 전체 취소 (로그아웃 시 호출)
+     * - SharedPreferences의 모든 슬롯 삭제
+     * - AlarmManager에 등록된 모든 슬롯 알람 취소
+     */
+    public static void cancelAllAlarmsForAllMedicines(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = prefs.getAll();
+
+        for (Map.Entry<String, ?> mapEntry : allEntries.entrySet()) {
+            String key = mapEntry.getKey();
+            if (key.startsWith("slot_")) {
+                cancelAlarmManager(context, key);
+            }
+        }
+
+        prefs.edit().clear().apply();
+        Log.d("AlarmHelper", "모든 알람 전체 취소됨 (로그아웃)");
+    }
+
     /** AlarmManager에서 슬롯 알람 취소 */
     private static void cancelAlarmManager(Context context, String key) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
