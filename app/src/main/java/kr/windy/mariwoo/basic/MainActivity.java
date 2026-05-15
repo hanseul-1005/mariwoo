@@ -85,7 +85,11 @@ public class MainActivity extends AppCompatActivity {
         // Drawer 헤더 영역 처리
         View     headerView  = navigationView.getHeaderView(0);
         TextView navUserName = headerView.findViewById(R.id.navHeaderMain_textView_name);
-        navUserName.setText("test"); // TODO: SharedPreferences에서 실제 사용자 이름으로 설정
+
+        // SharedPreferences에서 실제 사용자 이름 표시
+        SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
+        String userName = sharedPreferences.getString("user_name", "");
+        navUserName.setText(userName);
 
         // 로그아웃 버튼 → 알람 전체 취소 + SharedPreferences 초기화 후 LoginActivity로 이동
         Button btnLogout = headerView.findViewById(R.id.header_btn_logout);
@@ -94,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             AlarmHelper.cancelAllAlarmsForAllMedicines(this);
 
             // 자동 로그인 정보 전체 삭제
-            SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
             sharedPreferences.edit().clear().apply();
 
             // 로그인 화면으로 이동 (백스택 전부 제거하여 뒤로가기 방지)

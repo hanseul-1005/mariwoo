@@ -556,6 +556,10 @@ public class SignActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!pwCheckResult) {
+            Toast.makeText(getApplicationContext(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if ("".equals(name)) {
             Toast.makeText(getApplicationContext(), "이름을 입력해주세요.", Toast.LENGTH_SHORT).show();
             return;
