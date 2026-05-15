@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.basic.helper.AlarmRestoreHelper;
 import kr.windy.mariwoo.basic.user.SignActivity;
 
 import org.json.JSONObject;
@@ -204,10 +205,15 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("user_birth", userBirth);
                                 editor.apply();
 
-                                // 메인 화면으로 이동 후 현재 Activity 종료
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
+                                // 알람 복원 후 메인 화면으로 이동
+                                String medicineUrl = getString(R.string.server_medicine);
+                                AlarmRestoreHelper.restoreAlarms(
+                                        LoginActivity.this, userNo, medicineUrl, () -> {
+                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                );
 
                             } else {
                                 // 로그인 실패

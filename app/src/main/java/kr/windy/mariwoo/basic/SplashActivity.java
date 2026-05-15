@@ -21,6 +21,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.basic.helper.AlarmRestoreHelper;
 
 import org.json.JSONObject;
 
@@ -199,7 +200,7 @@ public class SplashActivity extends AppCompatActivity {
                         String     result = json.getString("result");
 
                         if ("true".equals(result)) {
-                            // 자동 로그인 성공 → 사용자 정보 저장 후 MainActivity로
+                            // 자동 로그인 성공 → 사용자 정보 저장 후 알람 복원 → MainActivity
                             String userNo    = json.getString("no");
                             String userName  = json.getString("name");
                             String userEmail = json.getString("email");
@@ -216,10 +217,16 @@ public class SplashActivity extends AppCompatActivity {
                             editor.putString("user_birth", userBirth);
                             editor.apply();
 
-                            Log.i("HS SplashActivity", "자동 로그인 성공 → MainActivity");
-                            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
+                            // 알람 복원 후 MainActivity로 이동
+                            Log.i("HS SplashActivity", "자동 로그인 성공 → 알람 복원 시작");
+                            String medicineUrl = getString(R.string.server_medicine);
+                            AlarmRestoreHelper.restoreAlarms(
+                                    SplashActivity.this, userNo, medicineUrl, () -> {
+                                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                            );
 
                         } else {
                             // 자동 로그인 실패 → 로그인 화면으로
