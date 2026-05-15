@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -156,7 +157,9 @@ public class SplashActivity extends AppCompatActivity {
         if (!"".equals(userId) && !"".equals(userPw)) {
             login();
         } else {
-            new Handler().postDelayed(this::goToLogin, 2000);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (!isFinishing() && !isDestroyed()) goToLogin();
+            }, 2000);
         }
     }
 

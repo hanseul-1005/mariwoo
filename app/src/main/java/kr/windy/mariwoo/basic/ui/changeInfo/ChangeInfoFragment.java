@@ -305,6 +305,12 @@ public class ChangeInfoFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
+    }
+
     /**
      * 생년월일 선택 다이얼로그 표시 (MaterialDatePicker)
      * - 1920년 1월 1일 ~ 오늘까지만 선택 가능

@@ -37,6 +37,9 @@ import java.util.ArrayList;
  */
 public class AlarmActivity extends AppCompatActivity {
 
+    /** WakeLock: 확인 버튼 클릭 시 즉시 해제하기 위해 필드로 관리 */
+    private PowerManager.WakeLock wakeLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +60,7 @@ public class AlarmActivity extends AppCompatActivity {
 
         // WakeLock 획득: 화면을 최대 10분간 켜둠 (알람 확인을 위해)
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock(
+        wakeLock = pm.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
                 "mariwoo:AlarmWakeLock"
         );
@@ -126,5 +129,17 @@ public class AlarmActivity extends AppCompatActivity {
             startActivity(intent2);
             finish();
         });
+    }
+
+    /**
+     * Activity 종료 시 WakeLock 즉시 해제
+     * 확인 버튼 클릭 시 10분 타임아웃 전에 배터리 소모 방지
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
     }
 }
