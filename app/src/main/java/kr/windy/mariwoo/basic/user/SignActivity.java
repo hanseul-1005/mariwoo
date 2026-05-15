@@ -164,6 +164,15 @@ public class SignActivity extends AppCompatActivity {
         editBirth.setOnClickListener(v -> showBirthDatePicker());
         editBirth.setTextColor(getResources().getColor(android.R.color.black));
 
+        // 아이디 입력 변경 시 중복 확인 결과 초기화 (재확인 강제)
+        editId.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                idCheckResult = false; // 아이디 바뀌면 중복 확인 무효화
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
         // 아이디 중복 확인
         idCheck = findViewById(R.id.signActivity_button_idCheck);
         idCheck.setOnClickListener(new View.OnClickListener() {
@@ -187,6 +196,7 @@ public class SignActivity extends AppCompatActivity {
                     pwCheckResult = false;
                 } else {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(SignActivity.this, R.color.theme_color));
                     pwCheckResult = true;
                 }
             }
@@ -208,6 +218,7 @@ public class SignActivity extends AppCompatActivity {
                     pwCheckResult = false;
                 } else {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(SignActivity.this, R.color.theme_color));
                     pwCheckResult = true;
                 }
             }

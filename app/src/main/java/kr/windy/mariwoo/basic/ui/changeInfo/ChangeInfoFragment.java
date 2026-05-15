@@ -178,6 +178,9 @@ public class ChangeInfoFragment extends Fragment {
             }
         });
 
+        // 변경 버튼 → changeInfo() 호출
+        root.findViewById(R.id.changeInfoFragment_button_change).setOnClickListener(v -> changeInfo());
+
         // 전화번호 자동 하이픈 포맷: 000-0000-0000
         editTel.addTextChangedListener(new TextWatcher() {
             boolean isFormatting; // 재귀 호출 방지 플래그

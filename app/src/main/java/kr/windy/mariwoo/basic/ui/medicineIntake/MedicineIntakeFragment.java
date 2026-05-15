@@ -242,6 +242,16 @@ public class MedicineIntakeFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 뷰 참조 해제 (메모리 누수 방지)
+        tvDate       = null;
+        btnSearch    = null;
+        recyclerView = null;
+        cardAdapter  = null;
+    }
+
     /**
      * 날짜 문자열 → 요일 인덱스 변환
      * Calendar.DAY_OF_WEEK: 1=일 ~ 7=토

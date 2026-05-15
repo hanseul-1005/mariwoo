@@ -41,6 +41,10 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
     public CalendarDayAdapter(List<Integer> dayList, Map<String, String> statusMap) {
         this.dayList   = dayList;
         this.statusMap = statusMap;
+        // 초기 year/month 설정 (updateData 호출 전 dateKey 오류 방지)
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        this.year  = cal.get(java.util.Calendar.YEAR);
+        this.month = cal.get(java.util.Calendar.MONTH) + 1;
     }
 
     /**

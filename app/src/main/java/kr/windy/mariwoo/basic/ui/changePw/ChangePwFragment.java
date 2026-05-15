@@ -122,6 +122,7 @@ public class ChangePwFragment extends Fragment {
                     pwCheckResult = false;
                 } else {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(act, R.color.theme_color));
                     pwCheckResult = true;
                 }
             }
@@ -147,6 +148,7 @@ public class ChangePwFragment extends Fragment {
                     pwCheckResult = false;
                 } else {
                     tvPwCheck.setText("비밀번호와 비밀번호 확인이 일치합니다.");
+                    tvPwCheck.setTextColor(ContextCompat.getColor(act, R.color.theme_color));
                     pwCheckResult = true;
                 }
             }

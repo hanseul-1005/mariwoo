@@ -104,7 +104,6 @@ public class RelationListFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 type = arrType[position]; // 선택된 유형 저장
-                Toast.makeText(getContext(), type + " 선택됨", Toast.LENGTH_SHORT).show();
                 getList(); // 해당 유형 목록 조회
             }
 
@@ -221,9 +220,9 @@ public class RelationListFragment extends Fragment {
                             }
 
                         } else {
-                            Toast.makeText(getContext(),
-                                    "일치하는 정보가 없습니다.\n입력하신 정보를 확인해주세요.",
-                                    Toast.LENGTH_SHORT).show();
+                            // 목록 없음 → 비우기만 (getContext() 대신 act 사용)
+                            listRelation.clear();
+                            if (outerAdapter != null) outerAdapter.notifyDataSetChanged();
                         }
 
                     } catch (Exception e) {
@@ -279,7 +278,7 @@ public class RelationListFragment extends Fragment {
                         if ("true".equals(result)) {
                             getList(); // 처리 성공 후 목록 새로고침
                         } else {
-                            Toast.makeText(getContext(),
+                            Toast.makeText(act.getApplicationContext(),
                                     "처리에 실패했습니다. 다시 시도해주세요.",
                                     Toast.LENGTH_SHORT).show();
                         }

@@ -108,7 +108,13 @@ public class AlarmHelper {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         for (String day : days) {
-            int    dayIndex    = Integer.parseInt(day.trim());
+            int dayIndex;
+            try {
+                dayIndex = Integer.parseInt(day.trim());
+            } catch (NumberFormatException e) {
+                Log.e("AlarmHelper", "잘못된 weekday 값: " + day);
+                continue;
+            }
             int    calendarDay = convertToCalendarDay(dayIndex);
             String key         = slotKey(dayIndex, timeType, time);
 
@@ -148,7 +154,13 @@ public class AlarmHelper {
         int hour   = Integer.parseInt(timeParts[0]);
         int minute = Integer.parseInt(timeParts[1]);
 
-        int dayIndex    = Integer.parseInt(weekday.trim());
+        int dayIndex;
+        try {
+            dayIndex = Integer.parseInt(weekday.trim());
+        } catch (NumberFormatException e) {
+            Log.e("AlarmHelper", "reRegisterAlarm - 잘못된 weekday 값: " + weekday);
+            return;
+        }
         int calendarDay = convertToCalendarDay(dayIndex);
 
         Calendar calendar = Calendar.getInstance();
@@ -202,7 +214,13 @@ public class AlarmHelper {
      */
     public static void cancelAlarm(Context context, String medicineNo,
                                    String weekday, int timeType) {
-        int    dayIndex   = Integer.parseInt(weekday.trim());
+        int dayIndex;
+        try {
+            dayIndex = Integer.parseInt(weekday.trim());
+        } catch (NumberFormatException e) {
+            Log.e("AlarmHelper", "cancelAlarm - 잘못된 weekday 값: " + weekday);
+            return;
+        }
         String keyPrefix  = "slot_" + dayIndex + "_" + timeType + "_";
 
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

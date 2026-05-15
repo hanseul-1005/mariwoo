@@ -123,8 +123,11 @@ public class RelationIntakeFragment extends Fragment {
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            calendar.setTime(sdf.parse(editDate.getText().toString()));
+            android.text.Editable editable = editDate.getText();
+            if (editable != null && !editable.toString().isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                calendar.setTime(sdf.parse(editable.toString()));
+            }
         } catch (Exception ignored) {}
 
         Activity act = getActivity();
@@ -166,7 +169,7 @@ public class RelationIntakeFragment extends Fragment {
                 .add("cmd",       "relation_list")
                 .add("no",        userNo)   // 내 user_no
                 .add("target_no", userNo)   // 가족 목록 조회용 (서버 처리 방식에 따라 다름)
-                .add("date",      editDate.getText().toString())
+                .add("date",      editDate.getText() != null ? editDate.getText().toString() : "")
                 .build();
 
         Request request = new Request.Builder()
@@ -240,7 +243,7 @@ public class RelationIntakeFragment extends Fragment {
         if (selectedIndex < 0 || selectedIndex >= familyNos.size()) return;
 
         String targetNo = familyNos.get(selectedIndex); // 대상자 user_no
-        String date     = editDate.getText().toString();
+        String date     = editDate.getText() != null ? editDate.getText().toString() : "";
         int    weekday  = getWeekdayFromDate(date);      // 날짜 → 요일 변환
 
         Log.i("HS", "조회 targetNo=" + targetNo + " date=" + date + " weekday=" + weekday);

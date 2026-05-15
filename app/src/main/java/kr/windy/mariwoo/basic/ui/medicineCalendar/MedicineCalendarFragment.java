@@ -104,6 +104,17 @@ public class MedicineCalendarFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // 뷰 참조 해제 (메모리 누수 방지)
+        tvYearMonth        = null;
+        tvMonth            = null;
+        btnSearch          = null;
+        recyclerView       = null;
+        calendarDayAdapter = null;
+    }
+
     /**
      * 서버에서 해당 월의 복용 현황 조회 후 달력 갱신
      * - 헤더 텍스트 업데이트

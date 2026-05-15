@@ -52,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton btnLogin; // 로그인 버튼
     private AppCompatButton btnSign;  // 회원가입 버튼
 
+    // 로그인 요청 진행 중 여부 (중복 클릭 방지)
+    private boolean isLoggingIn = false;
+
     private SharedPreferences sharedPreferences;
     private String userId    = ""; // 현재 입력된 아이디 (또는 저장된 아이디)
     private String userPw    = ""; // 현재 입력된 비밀번호 (또는 저장된 비밀번호)
@@ -147,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
      *   실패: {"result":"false"}
      */
     private void login() {
+        if (isLoggingIn) return; // 중복 요청 방지
         Log.i("HS LoginActivity", "login start");
 
         RequestBody formBody = new FormBody.Builder()
@@ -162,22 +166,39 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.i("HS LoginActivity", "request : " + request.toString());
 
+        // 중복 클릭 방지: 요청 중에는 버튼 비활성화
+        isLoggingIn = true;
+        btnLogin.setEnabled(false);
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> {
+                    isLoggingIn = false;
+                    btnLogin.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
                 // response.body().string()은 IO 작업이므로 runOnUiThread 밖에서 호출
-                if (response.body() == null) return;
+                if (response.body() == null) {
+                    runOnUiThread(() -> {
+                        isLoggingIn = false;
+                        btnLogin.setEnabled(true);
+                    });
+                    return;
+                }
                 final String responseData = response.body().string();
 
                 // UI 업데이트는 메인 스레드에서
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        isLoggingIn = false;
+                        btnLogin.setEnabled(true);
                         try {
                             Log.i("HS", "응답 성공");
 

@@ -105,7 +105,11 @@ public class MedicineScheduleAdapter extends RecyclerView.Adapter<MedicineSchedu
                         .setTitle("복용 확인")
                         .setMessage("약을 드셨나요?")
                         .setPositiveButton("네", (dialog, which) -> {
-                            listener.onCheckClick(item, position); // 서버에 복용 완료 기록 요청
+                            // getAdapterPosition()으로 최신 위치 사용 (stale position 방지)
+                            int adapterPos = holder.getAdapterPosition();
+                            if (adapterPos != androidx.recyclerview.widget.RecyclerView.NO_ID) {
+                                listener.onCheckClick(item, adapterPos);
+                            }
                         })
                         .setNegativeButton("아니요", null)
                         .show();

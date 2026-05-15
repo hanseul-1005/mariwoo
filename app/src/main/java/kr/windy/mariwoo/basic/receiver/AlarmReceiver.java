@@ -78,10 +78,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         alarmIntent.putExtra("time_type", timeTypeName);
         alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_USER_ACTION);
 
-        // fullScreenIntent용 PendingIntent
+        // fullScreenIntent용 PendingIntent (requestCode: 부호 비트 제거로 양수 보장)
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
                 context,
-                (int) System.currentTimeMillis(),
+                (int) (System.currentTimeMillis() & 0x7FFFFFFF),
                 alarmIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -117,7 +117,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setFullScreenIntent(fullScreenPendingIntent, true)
                 .setAutoCancel(true);
 
-        manager.notify((int) System.currentTimeMillis(), builder.build());
+        manager.notify((int) (System.currentTimeMillis() & 0x7FFFFFFF), builder.build());
 
         // 다음 주 동일 슬롯으로 알람 재등록 (약 목록은 SharedPreferences에서 그대로 유지)
         if (slotKey != null && weekday != null && time != null) {
