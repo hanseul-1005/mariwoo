@@ -255,6 +255,24 @@ public class MedicineAddActivity extends AppCompatActivity {
             return;
         }
 
+        // 시간이 입력된 슬롯은 반드시 식전/식후 선택 확인
+        if (!intakeTime1.isEmpty() && intakeType1.isEmpty()) {
+            Toast.makeText(this, "아침 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime2.isEmpty() && intakeType2.isEmpty()) {
+            Toast.makeText(this, "점심 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime3.isEmpty() && intakeType3.isEmpty()) {
+            Toast.makeText(this, "저녁 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime4.isEmpty() && intakeType4.isEmpty()) {
+            Toast.makeText(this, "취침 전 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // POST 파라미터 추가
         RequestBody formBody = new FormBody.Builder()
                 .add("cmd", "add_medicine")
