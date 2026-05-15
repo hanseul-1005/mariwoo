@@ -775,4 +775,21 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- 로딩 오버레이 (네트워크 요청 중 중복 클릭 방지) -->
+    <FrameLayout
+        android:id="@+id/medicineModifyActivity_layout_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+        <ProgressBar
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"/>
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -77,6 +78,16 @@ public class MedicineModifyActivity extends AppCompatActivity {
     private String medicineNo   = "";  // 약 번호 (알람 requestCode 기준)
     private String medicineName = "";  // 약 이름 (알림 표시용)
     private int    weekday      = 0;   // 수정 대상 요일 (MedicineListFragment에서 전달)
+
+    // 수정/삭제 버튼 (로딩 중 비활성화 처리)
+    private AppCompatButton btnModify;
+    private AppCompatButton btnDelete;
+
+    // 로딩 오버레이 (네트워크 요청 중 중복 클릭 방지)
+    private FrameLayout layoutLoading;
+
+    // 네트워크 요청 진행 중 여부 (중복 호출 방지)
+    private boolean isRequesting = false;
 
     // 싱글톤 OkHttpClient
     private final OkHttpClient client = new OkHttpClient();
@@ -150,8 +161,11 @@ public class MedicineModifyActivity extends AppCompatActivity {
         findViewById(R.id.medicineModifyActivity_layout_dinner_time).setOnClickListener(v -> showTimePicker(tvDinnerTime));
         findViewById(R.id.medicineModifyActivity_layout_night_time).setOnClickListener(v -> showTimePicker(tvNightTime));
 
+        // 로딩 오버레이 초기화
+        layoutLoading = findViewById(R.id.medicineModifyActivity_layout_loading);
+
         // 수정 버튼
-        AppCompatButton btnModify = findViewById(R.id.medicineModifyActivity_button_modify);
+        btnModify = findViewById(R.id.medicineModifyActivity_button_modify);
         btnModify.setText("수정");
         btnModify.setOnClickListener(v -> goModify());
 
@@ -163,7 +177,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
         });
 
         // 전체 약 알람 삭제 버튼 → 확인 다이얼로그
-        AppCompatButton btnDelete = findViewById(R.id.medicineModifyActivity_button_delete);
+        btnDelete = findViewById(R.id.medicineModifyActivity_button_delete);
         btnDelete.setOnClickListener(v -> showDeleteConfirmDialog());
 
         // 화면 진입 시 기존 데이터 로드
@@ -308,6 +322,8 @@ public class MedicineModifyActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() ->
+                        Toast.makeText(getApplicationContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -417,6 +433,9 @@ public class MedicineModifyActivity extends AppCompatActivity {
      *   4. 성공 시 해당 요일 알람 취소 후 새 알람 등록
      */
     private void goModify() {
+        // 중복 요청 방지
+        if (isRequesting) return;
+
         // 각 시간대 데이터 수집
         String intakeTimeType1 = "아침";
         String intakeType1     = getIntakeType(radioGroupMorning);
@@ -438,6 +457,24 @@ public class MedicineModifyActivity extends AppCompatActivity {
         // 최소 하나 이상 시간 입력 필수
         if (intakeTime1.isEmpty() && intakeTime2.isEmpty() && intakeTime3.isEmpty() && intakeTime4.isEmpty()) {
             Toast.makeText(this, "복용 시간을 하나 이상 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 시간 입력 시 식전/식후 필수 선택 검증
+        if (!intakeTime1.isEmpty() && intakeType1.isEmpty()) {
+            Toast.makeText(this, "아침 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime2.isEmpty() && intakeType2.isEmpty()) {
+            Toast.makeText(this, "점심 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime3.isEmpty() && intakeType3.isEmpty()) {
+            Toast.makeText(this, "저녁 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!intakeTime4.isEmpty() && intakeType4.isEmpty()) {
+            Toast.makeText(this, "취침 전 복용 시간의 식전/식후를 선택해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -489,30 +526,63 @@ public class MedicineModifyActivity extends AppCompatActivity {
                 .post(formBody)
                 .build();
 
+        // 로딩 시작: 오버레이 표시 + 버튼 비활성화
+        isRequesting = true;
+        layoutLoading.setVisibility(android.view.View.VISIBLE);
+        btnModify.setEnabled(false);
+        btnDelete.setEnabled(false);
+
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> {
+                    isRequesting = false;
+                    layoutLoading.setVisibility(android.view.View.GONE);
+                    btnModify.setEnabled(true);
+                    btnDelete.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.body() == null) return;
+                if (response.body() == null) {
+                    runOnUiThread(() -> {
+                        isRequesting = false;
+                        layoutLoading.setVisibility(android.view.View.GONE);
+                        btnModify.setEnabled(true);
+                        btnDelete.setEnabled(true);
+                        Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
 
                 try {
                     String responseData = response.body().string();
                     Log.i("HS", "goModify 응답 : " + responseData);
 
                     // 빈 응답 방어 처리
-                    if (responseData == null || responseData.trim().isEmpty()) {
+                    if (responseData.trim().isEmpty()) {
                         Log.e("HS", "goModify: 서버 응답이 비어있음");
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> {
+                            isRequesting = false;
+                            layoutLoading.setVisibility(android.view.View.GONE);
+                            btnModify.setEnabled(true);
+                            btnDelete.setEnabled(true);
+                            Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        });
                         return;
                     }
 
                     JSONObject json = new JSONObject(responseData);
 
                     runOnUiThread(() -> {
+                        isRequesting = false;
+                        layoutLoading.setVisibility(android.view.View.GONE);
+                        btnModify.setEnabled(true);
+                        btnDelete.setEnabled(true);
+
                         if (isFinishing() || isDestroyed()) return;
 
                         if ("true".equals(json.optString("result"))) {
@@ -533,6 +603,13 @@ public class MedicineModifyActivity extends AppCompatActivity {
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
+                    runOnUiThread(() -> {
+                        isRequesting = false;
+                        layoutLoading.setVisibility(android.view.View.GONE);
+                        btnModify.setEnabled(true);
+                        btnDelete.setEnabled(true);
+                        Toast.makeText(getApplicationContext(), "오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
         });
