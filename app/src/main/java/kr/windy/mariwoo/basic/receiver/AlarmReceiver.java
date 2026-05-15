@@ -43,6 +43,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Log.d("AlarmReceiver", "알람 수신됨! 슬롯: " + slotKey);
 
+        // slotKey가 null이면 SharedPreferences 조회 불가 → 무시
+        if (slotKey == null) {
+            Log.e("AlarmReceiver", "slotKey가 null, 알람 무시");
+            return;
+        }
+
         // SharedPreferences에서 이 슬롯의 약 목록 읽기
         // 형식: Set<"medicineNo||medicineName||intakeType">
         Set<String> medicineSet = AlarmHelper.getMedicineSet(context, slotKey);

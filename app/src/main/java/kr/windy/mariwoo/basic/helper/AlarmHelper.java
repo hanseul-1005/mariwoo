@@ -44,9 +44,10 @@ public class AlarmHelper {
         return "slot_" + dayIndex + "_" + timeType + "_" + time.replace(":", "");
     }
 
-    /** 슬롯 requestCode: 슬롯 키 해시값 (같은 슬롯은 항상 동일한 코드) */
+    /** 슬롯 requestCode: 슬롯 키 해시값 (같은 슬롯은 항상 동일한 코드)
+     *  Math.abs(Integer.MIN_VALUE) == MIN_VALUE (음수) 버그 방지 → 최상위 부호 비트 제거 */
     private static int slotRequestCode(String key) {
-        return Math.abs(key.hashCode());
+        return key.hashCode() & 0x7FFFFFFF;
     }
 
     // ──────────────────────────────────────────────
@@ -96,6 +97,10 @@ public class AlarmHelper {
         if (time == null || time.isEmpty()) return;
 
         String[] timeParts = time.split(":");
+        if (timeParts.length < 2) {
+            Log.e("AlarmHelper", "잘못된 time 형식: " + time);
+            return;
+        }
         int hour   = Integer.parseInt(timeParts[0]);
         int minute = Integer.parseInt(timeParts[1]);
 
@@ -136,6 +141,10 @@ public class AlarmHelper {
     public static void reRegisterAlarm(Context context, String key,
                                        String weekday, int timeType, String time) {
         String[] timeParts = time.split(":");
+        if (timeParts.length < 2) {
+            Log.e("AlarmHelper", "reRegisterAlarm - 잘못된 time 형식: " + time);
+            return;
+        }
         int hour   = Integer.parseInt(timeParts[0]);
         int minute = Integer.parseInt(timeParts[1]);
 
@@ -198,6 +207,7 @@ public class AlarmHelper {
 
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         Map<String, ?> allEntries = prefs.getAll();
+        SharedPreferences.Editor editor = prefs.edit();
 
         for (Map.Entry<String, ?> mapEntry : allEntries.entrySet()) {
             String key = mapEntry.getKey();
@@ -210,13 +220,14 @@ public class AlarmHelper {
 
             if (medicines.isEmpty()) {
                 cancelAlarmManager(context, key);
-                prefs.edit().remove(key).apply();
+                editor.remove(key);
                 Log.d("AlarmHelper", "슬롯 비어 알람 취소: " + key);
             } else {
-                prefs.edit().putStringSet(key, medicines).apply();
+                editor.putStringSet(key, medicines);
                 Log.d("AlarmHelper", "약 제거됨 (슬롯 유지): " + medicineNo + " / 슬롯: " + key);
             }
         }
+        editor.apply(); // 루프 완료 후 한 번만 apply
     }
 
     /**

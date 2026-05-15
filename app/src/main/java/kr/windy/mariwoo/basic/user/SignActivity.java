@@ -463,7 +463,7 @@ public class SignActivity extends AppCompatActivity {
 
         // 이메일 조합 (직접입력 여부에 따라)
         String userEmail;
-        if ("직접 입력".equals(emailAddr)) {
+        if ("직접입력".equals(emailAddr)) {
             userEmail = emailId + "@" + emailAddrDirect;
         } else {
             userEmail = emailId + "@" + emailAddr;

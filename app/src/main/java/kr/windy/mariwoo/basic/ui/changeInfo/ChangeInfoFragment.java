@@ -236,10 +236,10 @@ public class ChangeInfoFragment extends Fragment {
         String emailAddr       = editAddr.getText().toString();
         String emailAddrDirect = editAddrDirect.getText().toString();
 
-        if ("직접 입력".equals(emailAddr)) {
-            userEmail = emailId + emailAddrDirect;
+        if ("직접입력".equals(emailAddr)) {
+            userEmail = emailId + "@" + emailAddrDirect;
         } else {
-            userEmail = emailId + emailAddr;
+            userEmail = emailId + "@" + emailAddr;
         }
         userBirth = editBirth.getText().toString();
 
