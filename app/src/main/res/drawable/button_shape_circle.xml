@@ -3,7 +3,7 @@
     <!-- 선택된 상태 (ON) -->
     <item android:state_selected="true">
         <shape android:shape="oval">
-            <solid android:color="@color/top_color"/> <!-- ON 색상 -->
+            <solid android:color="@color/theme_color"/> <!-- ON 색상 -->
             <size android:width="40dp" android:height="40dp"/>
         </shape>
     </item>

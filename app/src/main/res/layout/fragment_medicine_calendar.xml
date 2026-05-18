@@ -25,10 +25,11 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/calendarFragment_button_search"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="30dp"
             android:text="조회"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#4CAF50" />
+            style="@style/add_btn"
+            android:background="@drawable/button_radius15_bg_theme"/>
+
     </LinearLayout>
 
     <!-- 달력 헤더 + 네비게이션 -->

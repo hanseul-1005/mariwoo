@@ -13,7 +13,7 @@
     <color name="color_r">#D92B2B</color>
     <color name="color_w">#f2f2f2</color>
     <color name="color_dark_g">#014029</color>
-    <color name="color_gray">#808080</color>
+    <color name="color_gray">#C8C8C8</color>
 
     <!-- 회색 -->
     <color name="color_gray0">#f8f9fa</color>
@@ -29,7 +29,7 @@
 
     <color name="login_background">#3FCEBE</color>
     <color name="top_color">#1CA673</color>
-    <color name="base_background">#F4F5F6</color>
+    <color name="base_background">#F4F5F5</color>
 
     <color name="mariwoo_theme">#3FCEBE</color>
 
