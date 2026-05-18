@@ -181,6 +181,7 @@ public class MedicineIntakeFragment extends Fragment {
                     Activity act = getActivity();
                     if (act == null || act.isFinishing()) return;
                     act.runOnUiThread(() -> {
+                        if (cardAdapter == null) return;
                         cardList.clear();
                         cardList.addAll(newList);
                         cardAdapter.notifyDataSetChanged();
@@ -231,6 +232,7 @@ public class MedicineIntakeFragment extends Fragment {
                         Activity act = getActivity();
                         if (act == null || act.isFinishing()) return;
                         act.runOnUiThread(() -> {
+                            if (cardAdapter == null) return;
                             item.setTaken(true);
                             cardAdapter.notifyDataSetChanged();
                         });
