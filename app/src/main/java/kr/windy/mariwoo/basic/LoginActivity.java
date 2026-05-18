@@ -1,10 +1,17 @@
 package kr.windy.mariwoo.basic;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -52,8 +59,13 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton btnLogin; // 로그인 버튼
     private AppCompatButton btnSign;  // 회원가입 버튼
 
+    private static final int REQ_NOTIFICATION = 1001;
+
     // 로그인 요청 진행 중 여부 (중복 클릭 방지)
     private boolean isLoggingIn = false;
+
+    // 전체화면 알림 권한 설정 화면을 열었는지 여부
+    private boolean launchedSettings = false;
 
     private SharedPreferences sharedPreferences;
     private String userId    = ""; // 현재 입력된 아이디 (또는 저장된 아이디)
@@ -137,6 +149,55 @@ public class LoginActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        // 권한 요청 (알림 + 전체화면 알림)
+        startPermissionFlow();
+    }
+
+    // ── 권한 처리 ──────────────────────────────────────────────
+
+    /** Step 1: 알림 권한 요청 (Android 13+) */
+    private void startPermissionFlow() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATION);
+                return;
+            }
+        }
+        checkFullScreenIntentPermission();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_NOTIFICATION) {
+            checkFullScreenIntentPermission();
+        }
+    }
+
+    /** Step 2: 전체화면 알림 권한 확인 (Android 14+) */
+    private void checkFullScreenIntentPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            NotificationManager manager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!manager.canUseFullScreenIntent()) {
+                launchedSettings = true;
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (launchedSettings) {
+            launchedSettings = false;
+        }
     }
 
     /**

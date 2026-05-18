@@ -44,9 +44,14 @@
             android:exported="false" />
         <activity
             android:name=".basic.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.Mariwoo.NoActionBar" />
+            android:theme="@style/Theme.Mariwoo.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".basic.NaverLoginActivity"
             android:exported="false" />
@@ -62,15 +67,7 @@
         <activity
             android:name=".basic.LoginActivity"
             android:exported="false" />
-        <activity
-            android:name=".basic.SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- 알람 수신 BroadcastReceiver 등록 -->
+        <!-- 알람 수신 BroadcastReceiver 등록 -->
         <receiver
             android:name=".basic.receiver.AlarmReceiver"
             android:exported="true">
