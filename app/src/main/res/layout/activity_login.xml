@@ -16,7 +16,7 @@
         android:id="@+id/loginActivity_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/login_background">
+        android:background="@drawable/bg_login_gradient">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             <!-- 로고 (상단 여백으로 중앙 위치 연출) -->
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="100dp"
                 android:src="@drawable/app_icon"/>
