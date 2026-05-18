@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -61,6 +62,8 @@ public class RelationListFragment extends Fragment {
     // 관계 목록 데이터 및 어댑터
     private RelationOuterAdapter outerAdapter;
     private List<RelationModel>  listRelation;
+    private RecyclerView         rvOuter;
+    private LinearLayout         layoutEmpty;
 
     private SharedPreferences sharedPreferences;
     private String userNo    = "";
@@ -113,7 +116,10 @@ public class RelationListFragment extends Fragment {
 
         listRelation = new ArrayList<>();
 
-        RecyclerView rvOuterRecyclerView = binding.relationListFragmentRecyclerviewOuter;
+        rvOuter = binding.relationListFragmentRecyclerviewOuter;
+        layoutEmpty = root.findViewById(R.id.relationListFragment_layout_empty);
+
+        RecyclerView rvOuterRecyclerView = rvOuter;
 
         // 관계 목록 어댑터 (삭제/수락/거절 콜백)
         outerAdapter = new RelationOuterAdapter(getContext(), listRelation,
@@ -218,11 +224,13 @@ public class RelationListFragment extends Fragment {
                             if (outerAdapter != null) {
                                 outerAdapter.notifyDataSetChanged();
                             }
+                            updateEmptyView();
 
                         } else {
                             // 목록 없음 → 비우기만 (getContext() 대신 act 사용)
                             listRelation.clear();
                             if (outerAdapter != null) outerAdapter.notifyDataSetChanged();
+                            updateEmptyView();
                         }
 
                     } catch (Exception e) {
@@ -291,9 +299,18 @@ public class RelationListFragment extends Fragment {
         });
     }
 
+    private void updateEmptyView() {
+        if (rvOuter == null || layoutEmpty == null) return;
+        boolean isEmpty = listRelation == null || listRelation.isEmpty();
+        rvOuter.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
+        rvOuter = null;
+        layoutEmpty = null;
     }
 }

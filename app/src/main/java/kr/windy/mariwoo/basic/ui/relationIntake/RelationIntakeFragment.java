@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -57,6 +58,7 @@ public class RelationIntakeFragment extends Fragment {
     private TextInputEditText editDate;      // 날짜 입력 필드
     private AppCompatButton   btnSelect;     // 조회 버튼
     private RecyclerView      rvOuter;       // 약 목록 RecyclerView
+    private LinearLayout      layoutEmpty;
 
     // 약 목록 어댑터 및 데이터
     private MedicineOuterAdapter outerAdapter;
@@ -93,6 +95,7 @@ public class RelationIntakeFragment extends Fragment {
         editDate      = root.findViewById(R.id.relationIntakeFragment_editText_date);
         btnSelect     = root.findViewById(R.id.relationIntakeFragment_button_select);
         rvOuter       = root.findViewById(R.id.relationIntakeFragment_recyclerview_outer);
+        layoutEmpty   = root.findViewById(R.id.relationIntakeFragment_layout_empty);
 
         // 오늘 날짜를 기본값으로 설정
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -141,6 +144,20 @@ public class RelationIntakeFragment extends Fragment {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void updateEmptyView() {
+        if (rvOuter == null || layoutEmpty == null) return;
+        boolean isEmpty = listMedicine == null || listMedicine.isEmpty();
+        rvOuter.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        rvOuter     = null;
+        layoutEmpty = null;
     }
 
     /**
@@ -309,6 +326,7 @@ public class RelationIntakeFragment extends Fragment {
                         listMedicine.clear();
                         listMedicine.addAll(tempList);
                         outerAdapter.notifyDataSetChanged();
+                        updateEmptyView();
 
                         if (listMedicine.isEmpty()) {
                             Toast.makeText(getContext(), "복약 내역이 없습니다.", Toast.LENGTH_SHORT).show();

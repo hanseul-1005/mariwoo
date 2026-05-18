@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatButton;
@@ -50,6 +51,7 @@ public class MedicineIntakeFragment extends Fragment {
     private TextView         tvDate;      // 날짜 표시 텍스트 (클릭 시 DatePicker 오픈)
     private AppCompatButton  btnSearch;   // 조회 버튼
     private RecyclerView     recyclerView;
+    private LinearLayout     layoutEmpty;
     private MedicineCardAdapter cardAdapter;
     private List<MedicineCardItem> cardList = new ArrayList<>();
 
@@ -73,6 +75,7 @@ public class MedicineIntakeFragment extends Fragment {
         tvDate       = view.findViewById(R.id.medicineIntakeFragment_editText_date);
         btnSearch    = view.findViewById(R.id.medicineIntakeFragment_button_add);
         recyclerView = view.findViewById(R.id.medicineIntakeFragment_recyclerview);
+        layoutEmpty  = view.findViewById(R.id.medicineIntakeFragment_layout_empty);
 
         // 오늘 날짜로 초기화 (내부 저장용: yyyy-MM-dd, 표시용: yyyy년 MM월 dd일)
         selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
@@ -185,6 +188,7 @@ public class MedicineIntakeFragment extends Fragment {
                         cardList.clear();
                         cardList.addAll(newList);
                         cardAdapter.notifyDataSetChanged();
+                        updateEmptyView();
                     });
 
                 } catch (Exception e) {
@@ -235,6 +239,7 @@ public class MedicineIntakeFragment extends Fragment {
                             if (cardAdapter == null) return;
                             item.setTaken(true);
                             cardAdapter.notifyDataSetChanged();
+                            updateEmptyView();
                         });
                     }
                 } catch (Exception e) {
@@ -244,6 +249,13 @@ public class MedicineIntakeFragment extends Fragment {
         });
     }
 
+    private void updateEmptyView() {
+        if (recyclerView == null || layoutEmpty == null) return;
+        boolean isEmpty = cardList == null || cardList.isEmpty();
+        recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -251,6 +263,7 @@ public class MedicineIntakeFragment extends Fragment {
         tvDate       = null;
         btnSearch    = null;
         recyclerView = null;
+        layoutEmpty  = null;
         cardAdapter  = null;
     }
 
