@@ -226,6 +226,7 @@ public class RelationIntakeFragment extends Fragment {
                     uiAct.runOnUiThread(() -> {
                         if (familyNames.isEmpty()) {
                             Toast.makeText(getContext(), "등록된 가족이 없습니다.", Toast.LENGTH_SHORT).show();
+                            updateEmptyView();
                             return;
                         }
                         // 스피너에 가족 이름 목록 설정
@@ -235,6 +236,9 @@ public class RelationIntakeFragment extends Fragment {
                                 familyNames);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinnerTarget.setAdapter(adapter);
+
+                        // 가족 목록이 있으면 첫 번째 가족의 복용 내역 자동 조회
+                        getIntakeList();
                     });
 
                 } catch (Exception e) {
