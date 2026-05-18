@@ -31,7 +31,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="100dp"
-                android:src="@drawable/windy_logo"/>
+                android:src="@drawable/app_icon"/>
 
             <!-- 입력 및 버튼 영역 -->
             <androidx.constraintlayout.widget.ConstraintLayout
