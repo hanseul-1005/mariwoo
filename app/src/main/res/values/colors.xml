@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#18C6B1</color>
-    <color name="purple_500">#18C6B1</color>
-    <color name="purple_700">#18C6B1</color>
+    <color name="purple_200">#3FCEBE</color>
+    <color name="purple_500">#3FCEBE</color>
+    <color name="purple_700">#3FCEBE</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="theme_color">#18C6B1</color>
+    <color name="theme_color">#3FCEBE</color>
     <color name="color_y">#F29B30</color>
     <color name="color_r">#D92B2B</color>
     <color name="color_w">#f2f2f2</color>
@@ -27,11 +27,11 @@
     <color name="color_gray8">#343a40</color>
     <color name="color_gray9">#212529</color>
 
-    <color name="login_background">#18C6B1</color>
+    <color name="login_background">#3FCEBE</color>
     <color name="top_color">#1CA673</color>
     <color name="base_background">#F4F5F6</color>
 
-    <color name="mariwoo_theme">#18C6B1</color>
+    <color name="mariwoo_theme">#3FCEBE</color>
 
     <color name="transparent">#00000000</color>
 
