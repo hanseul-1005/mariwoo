@@ -93,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:text="약 이름"
                         style="@style/sign_title"
-                        android:background="@color/base_background"
+                        android:background="@color/white"
                         android:layout_marginLeft="3dp"/>
 
                 </LinearLayout>
@@ -144,7 +144,7 @@
                         android:layout_height="wrap_content"
                         android:text="반복 요일 선택"
                         style="@style/sign_title"
-                        android:background="@color/base_background"
+                        android:background="@color/white"
                         android:layout_marginLeft="3dp"/>
 
                 </LinearLayout>
@@ -247,7 +247,7 @@
                         android:layout_height="wrap_content"
                         android:text="복용 시간 등록"
                         style="@style/sign_title"
-                        android:background="@color/base_background"
+                        android:background="@color/white"
                         android:layout_marginLeft="3dp"/>
 
                 </LinearLayout>
@@ -279,7 +279,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="아침"
-                            android:background="@color/base_background"
+                            android:background="@color/white"
                             style="@style/medicine_day"
                             android:layout_marginLeft="10dp"/>
 
@@ -399,7 +399,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="점심"
-                            android:background="@color/base_background"
+                            android:background="@color/white"
                             style="@style/medicine_day"
                             android:layout_marginLeft="10dp"/>
 
@@ -519,7 +519,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="저녁"
-                            android:background="@color/base_background"
+                            android:background="@color/white"
                             style="@style/medicine_day"
                             android:layout_marginLeft="10dp"/>
 
@@ -639,7 +639,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="취침 전"
-                            android:background="@color/base_background"
+                            android:background="@color/white"
                             style="@style/medicine_day"
                             android:layout_marginLeft="10dp"/>
 
