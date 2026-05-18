@@ -22,17 +22,20 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_gravity="center_vertical"
                 android:padding="2dp"
-                android:background="@drawable/layout_medicine_time_radius">
+                android:background="@drawable/layout_border_radius5">
 
                 <Spinner
                     android:id="@+id/medicineListFragment_spinner_weekday"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="35dp"
+                    android:layout_margin="1dp"
+                    android:layout_gravity="center_vertical"/>
 
             </LinearLayout>
 
