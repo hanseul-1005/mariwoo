@@ -18,7 +18,7 @@
             android:id="@+id/medicineAddActivity_layout_top"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/top_color"
+            android:background="@color/theme_color"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -30,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginLeft="5dp"
                 android:src="@drawable/icon_back"
-                android:background="@color/top_color"
+                android:background="@color/theme_color"
                 app:tint="@color/white" />
 
             <TextView
@@ -41,7 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 style="@style/top_menu_title"
-                android:background="@color/top_color"
+                android:background="@color/theme_color"
                 android:text="약 등록" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -58,7 +58,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="40dp"
                 android:background="@color/base_background">
 
                 <!-- 약 이름 입력 -->
@@ -741,7 +744,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/medicineAddActivity_button_login"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="45dp"
             android:text="등록"
             android:textColor="@color/theme_color"
             android:textSize="17dp"
