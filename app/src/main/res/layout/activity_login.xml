@@ -16,7 +16,7 @@
         android:id="@+id/loginActivity_scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_login_gradient">
+        android:background="#C4E7E7">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="100dp"
-                android:src="@drawable/app_icon"/>
+                android:src="@drawable/app_icon_login"/>
 
             <!-- 입력 및 버튼 영역 -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -113,7 +113,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button_radius15_bg_white"
                     android:text="회원가입"
-                    android:textColor="@color/theme_color"
+                    android:textColor="#18C6B1"
                     android:textSize="15dp"
                     android:textStyle="bold"
                     android:stateListAnimator="@null"
@@ -127,6 +127,7 @@
                     app:layout_constraintTop_toBottomOf="@id/loginActivity_button_sign"/>
 
                 <LinearLayout
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintLeft_toLeftOf="parent"
