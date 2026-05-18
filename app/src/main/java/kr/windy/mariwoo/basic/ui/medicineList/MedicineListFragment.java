@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -58,6 +59,8 @@ public class MedicineListFragment extends Fragment {
     private FragmentMedicineListBinding binding;
     private Spinner          spinnerWeekday;
     private AppCompatButton  btnAdd;
+    private RecyclerView     rvOuter;
+    private LinearLayout     layoutEmpty;
 
     // 약 목록 데이터 및 어댑터
     private MedicineOuterAdapter outerAdapter;
@@ -77,7 +80,9 @@ public class MedicineListFragment extends Fragment {
         binding = FragmentMedicineListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        RecyclerView rvOuterRecyclerView = binding.medicineListFragmentRecyclerviewOuter;
+        rvOuter     = binding.medicineListFragmentRecyclerviewOuter;
+        layoutEmpty = root.findViewById(R.id.medicineListFragment_layout_empty);
+        RecyclerView rvOuterRecyclerView = rvOuter;
 
         serverUrl = getString(R.string.server_medicine);
 
@@ -249,6 +254,8 @@ public class MedicineListFragment extends Fragment {
                             if (outerAdapter != null) outerAdapter.notifyDataSetChanged();
                         }
 
+                        updateEmptyView();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -257,9 +264,19 @@ public class MedicineListFragment extends Fragment {
         });
     }
 
+    /** 목록이 비었을 때 empty view 표시, 있을 때 RecyclerView 표시 */
+    private void updateEmptyView() {
+        if (rvOuter == null || layoutEmpty == null) return;
+        boolean isEmpty = listMedicineName == null || listMedicineName.isEmpty();
+        rvOuter.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        layoutEmpty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
+        binding     = null;
+        rvOuter     = null;
+        layoutEmpty = null;
     }
 }
