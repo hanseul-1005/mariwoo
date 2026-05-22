@@ -128,21 +128,21 @@ public class RelationListFragment extends Fragment {
                     public void onDelete(RelationModel relation, int position) {
                         // 삭제: accept='D'로 관계 상태 변경
                         Log.d("HS", "삭제 클릭 : " + relation.getName());
-                        setAccept(relation.getNo(), "D");
+                        setAccept(relation.getRelationNo(), "D");
                     }
 
                     @Override
                     public void onAccept(RelationModel relation, int position) {
                         // 수락: accept='Y'로 관계 상태 변경
                         Log.d("HS", "수락 클릭 : " + relation.getName());
-                        setAccept(relation.getNo(), "Y");
+                        setAccept(relation.getRelationNo(), "Y");
                     }
 
                     @Override
                     public void onReject(RelationModel relation, int position) {
                         // 거절: accept='D'로 관계 상태 변경 (삭제와 동일 처리)
                         Log.d("HS", "거절 클릭 : " + relation.getName());
-                        setAccept(relation.getNo(), "D");
+                        setAccept(relation.getRelationNo(), "D");
                     }
                 });
 
@@ -218,6 +218,7 @@ public class RelationListFragment extends Fragment {
                                 relation.setName(obj.getString("name"));
                                 relation.setTel(obj.getString("tel"));
                                 relation.setType(obj.getString("type"));
+                                relation.setRelationNo(obj.getString("relation_no"));
                                 listRelation.add(relation);
                             }
 
@@ -246,12 +247,12 @@ public class RelationListFragment extends Fragment {
      * @param no     관계 번호
      * @param accept 처리 값 ("Y"=수락, "D"=거절/삭제)
      */
-    private void setAccept(String no, String accept) {
+    private void setAccept(String relationNo, String accept) {
         Log.i("HS RelationListFragment", "set Accept: " + accept);
 
         RequestBody formBody = new FormBody.Builder()
                 .add("cmd",    "change_accept")
-                .add("no",     no)
+                .add("no",     relationNo)
                 .add("accept", accept) // "Y" 또는 "D"
                 .build();
 

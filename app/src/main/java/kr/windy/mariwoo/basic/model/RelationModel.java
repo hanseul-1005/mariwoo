@@ -8,6 +8,7 @@ public class RelationModel {
     private String tel;
     private String accept;
     private String type;
+    private String relationNo;
 
     private List<RelationModel> listRelation;
 
@@ -49,6 +50,14 @@ public class RelationModel {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRelationNo() {
+        return relationNo;
+    }
+
+    public void setRelationNo(String relationNo) {
+        this.relationNo = relationNo;
     }
 
     public List<RelationModel> getListRelation() {
