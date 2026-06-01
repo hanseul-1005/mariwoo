@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/layout_border_radius0_no_top"
+        android:weightSum="4.72"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/itemHospitalList_textView_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:padding="4dp"/>
+
+        <View android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="0.01" android:background="@color/login_background"/>
+
+        <TextView
+            android:id="@+id/itemHospitalList_textView_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:padding="4dp"/>
+
+        <View android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="0.01" android:background="@color/login_background"/>
+
+        <TextView
+            android:id="@+id/itemHospitalList_textView_memo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:padding="4dp"
+            android:ellipsize="end"
+            android:maxLines="2"/>
+
+        <View android:layout_width="0dp" android:layout_height="match_parent"
+            android:layout_weight="0.01" android:background="@color/login_background"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.3"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/itemHospitalList_button_modify"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:text="수정"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_radius10_bg_theme"
+                    android:stateListAnimator="@null"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="4dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/itemHospitalList_button_delete"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:text="삭제"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/button_radius10_red"
+                    android:stateListAnimator="@null"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

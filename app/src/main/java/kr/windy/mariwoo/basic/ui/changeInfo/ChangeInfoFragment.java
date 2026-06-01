@@ -17,7 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.Filter;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -68,7 +69,7 @@ public class ChangeInfoFragment extends Fragment {
 
     private EditText          editTel;          // 전화번호 입력 (자동 하이픈)
     private TextInputEditText editEmail;        // 이메일 아이디 부분
-    private AutoCompleteTextView editAddr;      // 이메일 도메인 드롭다운
+    private MaterialAutoCompleteTextView editAddr; // 이메일 도메인 드롭다운
     private TextInputLayout   layoutEmailDirect; // "직접입력" 선택 시 표시되는 레이아웃
     private TextInputEditText editAddrDirect;  // 도메인 직접 입력 필드
     private TextInputEditText editBirth;        // 생년월일
@@ -155,18 +156,39 @@ public class ChangeInfoFragment extends Fragment {
         editBirth.setText(userBirth);
         editAddr.setText(emailDomains[idx], false);
 
-        // "직접입력" 도메인이면 직접 입력 필드에 도메인 표시
+        // "직접입력" 도메인이면 직접 입력 필드 표시 및 도메인 값 설정
         if (idx == 6) {
+            layoutEmailDirect.setVisibility(View.VISIBLE);
             editAddrDirect.setText(emailAddr);
         }
 
-        // 이메일 도메인 드롭다운 어댑터
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        // 이메일 도메인 드롭다운 어댑터 (필터링 비활성화 → 항상 전체 목록 표시)
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 requireContext(),
-                android.R.layout.simple_dropdown_item_1line,
+                android.R.layout.simple_list_item_1,
                 emailDomains
-        );
+        ) {
+            @NonNull
+            @Override
+            public Filter getFilter() {
+                return new Filter() {
+                    @Override
+                    protected FilterResults performFiltering(CharSequence constraint) {
+                        FilterResults results = new FilterResults();
+                        results.values = emailDomains;
+                        results.count  = emailDomains.length;
+                        return results;
+                    }
+                    @Override
+                    protected void publishResults(CharSequence constraint, FilterResults results) {
+                        notifyDataSetChanged();
+                    }
+                };
+            }
+        };
         editAddr.setAdapter(adapter);
+        editAddr.setThreshold(0);                                  // 입력 없이도 목록 표시
+        editAddr.setOnClickListener(v -> editAddr.showDropDown()); // 클릭 시 바로 드롭다운 오픈
         editAddr.setOnItemClickListener((parent, view, position, id) -> {
             String selected = editAddr.getText().toString();
             if ("직접입력".equals(selected)) {
@@ -247,11 +269,11 @@ public class ChangeInfoFragment extends Fragment {
         userBirth = editBirth.getText().toString();
 
         RequestBody formBody = new FormBody.Builder()
-                .add("cmd",    "change_info")
-                .add("userNo", userNo)
-                .add("tel",    userTel)
-                .add("email",  userEmail)
-                .add("birth",  userBirth)
+                .add("cmd",   "change_info")
+                .add("no",    userNo)
+                .add("tel",   userTel)
+                .add("email", userEmail)
+                .add("birth", userBirth)
                 .build();
 
         Request request = new Request.Builder()
@@ -280,7 +302,13 @@ public class ChangeInfoFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
-                            Log.i("HS", "응답 성공");
+                            Log.i("HS ChangeInfoFragment", "응답: " + responseData);
+
+                            // 서버가 HTML 에러 페이지를 반환한 경우
+                            if (responseData.trim().startsWith("<")) {
+                                Toast.makeText(getContext(), "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
                             JSONObject json   = new JSONObject(responseData);
                             String     result = json.getString("result");

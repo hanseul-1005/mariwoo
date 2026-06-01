@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingBottom="40dp">
+
+        <!-- 병원명 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="병원명"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+        <EditText
+            android:id="@+id/hospitalAddActivity_editText_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/layout_border_radius5"
+            android:hint="병원명을 입력하세요."
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:textSize="14sp"
+            android:inputType="text"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 날짜 + 시간 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginRight="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="병원 방문 날짜"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <EditText
+                    android:id="@+id/hospitalAddActivity_editText_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/layout_border_radius5"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:textSize="13sp"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:inputType="none"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginLeft="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="병원 방문 시간"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <EditText
+                    android:id="@+id/hospitalAddActivity_editText_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/layout_border_radius5"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:textSize="13sp"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:inputType="none"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- 방문사유(비고) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="방문사유(비고)"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
+
+        <EditText
+            android:id="@+id/hospitalAddActivity_editText_memo"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/layout_border_radius5"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:textSize="14sp"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- 등록/수정 버튼 -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/hospitalAddActivity_button_save"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="병원 스케줄 등록"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_radius15_bg_theme"
+            android:stateListAnimator="@null"/>
+
+    </LinearLayout>
+
+</ScrollView>

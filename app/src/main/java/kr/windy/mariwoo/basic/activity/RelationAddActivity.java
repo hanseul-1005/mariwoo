@@ -3,6 +3,8 @@ package kr.windy.mariwoo.basic.activity;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -80,6 +82,42 @@ public class RelationAddActivity extends AppCompatActivity {
 
         editId  = findViewById(R.id.relationAddActivity_editText_id);
         editTel = findViewById(R.id.relationAddActivity_editText_tel);
+
+        // 전화번호 자동 하이픈 처리 (010-0000-0000)
+        editTel.addTextChangedListener(new TextWatcher() {
+            private boolean isFormatting = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isFormatting) return;
+                isFormatting = true;
+
+                // 숫자만 추출
+                String digits = s.toString().replaceAll("[^0-9]", "");
+
+                // 하이픈 포맷 적용 (최대 11자리)
+                String formatted;
+                if (digits.length() <= 3) {
+                    formatted = digits;
+                } else if (digits.length() <= 7) {
+                    formatted = digits.substring(0, 3) + "-" + digits.substring(3);
+                } else {
+                    digits = digits.substring(0, Math.min(digits.length(), 11));
+                    formatted = digits.substring(0, 3) + "-"
+                            + digits.substring(3, 7) + "-"
+                            + digits.substring(7);
+                }
+
+                s.replace(0, s.length(), formatted);
+                isFormatting = false;
+            }
+        });
 
         // 신청 버튼
         btnOk = findViewById(R.id.relationAddActivity_button_ok);

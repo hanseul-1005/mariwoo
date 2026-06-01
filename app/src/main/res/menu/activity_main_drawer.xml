@@ -18,8 +18,11 @@
             android:id="@+id/nav_relation_intake_list"
             android:title="@string/menu_relation_intake"/>
         <item
-        android:id="@+id/nav_medicine_calendar"
-        android:title="복용 내역 달력 조회"/>
+            android:id="@+id/nav_medicine_calendar"
+            android:title="복용 내역 달력 조회"/>
+        <item
+            android:id="@+id/nav_hospital_list"
+            android:title="@string/menu_hospital_list"/>
         <item
             android:id="@+id/nav_change_info"
             android:title="@string/menu_change_info"/>

@@ -94,7 +94,7 @@
                         android:layout_height="wrap_content"
                         android:text="약 이름"
                         style="@style/sign_title"
-                        android:background="@color/white"
+                        android:background="@color/base_background"
                         android:layout_marginLeft="3dp"/>
 
                 </LinearLayout>
@@ -249,7 +249,7 @@
                         android:layout_height="wrap_content"
                         android:text="복용 시간 등록"
                         style="@style/sign_title"
-                        android:background="@color/white"
+                        android:background="@color/base_background"
                         android:layout_marginLeft="3dp"/>
 
                 </LinearLayout>
@@ -275,7 +275,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/morning"
-                            android:background="@color/base_background"/>
+                            android:background="@color/white"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -395,7 +395,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/launch"
-                            android:background="@color/base_background"/>
+                            android:background="@color/white"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -515,7 +515,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/dinner"
-                            android:background="@color/base_background"/>
+                            android:background="@color/white"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -635,7 +635,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/bed"
-                            android:background="@color/base_background"/>
+                            android:background="@color/white"/>
 
                         <TextView
                             android:layout_width="wrap_content"

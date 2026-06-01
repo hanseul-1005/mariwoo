@@ -122,7 +122,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1.2">
 
-                                <AutoCompleteTextView
+                                <com.google.android.material.textfield.MaterialAutoCompleteTextView
                                     android:id="@+id/changeInfoFragment_autoTextview_emailAddr"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"

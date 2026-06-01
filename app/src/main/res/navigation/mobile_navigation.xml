@@ -36,6 +36,12 @@
         tools:layout="@layout/fragment_medicine_calendar" />
 
     <fragment
+        android:id="@+id/nav_hospital_list"
+        android:name="kr.windy.mariwoo.basic.ui.hospitalList.HospitalListFragment"
+        android:label="@string/menu_hospital_list"
+        tools:layout="@layout/fragment_hospital_list" />
+
+    <fragment
         android:id="@+id/nav_change_info"
         android:name="kr.windy.mariwoo.basic.ui.changeInfo.ChangeInfoFragment"
         android:label="@string/menu_change_info"
