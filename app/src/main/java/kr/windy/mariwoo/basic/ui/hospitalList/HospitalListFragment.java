@@ -50,7 +50,7 @@ import okhttp3.Response;
 public class HospitalListFragment extends Fragment {
 
     private EditText          editStartDate, editEndDate;
-    private AppCompatButton   btnSearch, btnAdd;
+    private AppCompatButton   btnAdd;
     private RecyclerView      recyclerView;
     private LinearLayout      layoutEmpty;
 
@@ -77,7 +77,6 @@ public class HospitalListFragment extends Fragment {
 
         editStartDate = root.findViewById(R.id.hospitalListFragment_editText_startDate);
         editEndDate   = root.findViewById(R.id.hospitalListFragment_editText_endDate);
-        btnSearch     = root.findViewById(R.id.hospitalListFragment_button_search);
         btnAdd        = root.findViewById(R.id.hospitalListFragment_button_add);
         recyclerView  = root.findViewById(R.id.hospitalListFragment_recyclerview);
         layoutEmpty   = root.findViewById(R.id.hospitalListFragment_layout_empty);
@@ -90,8 +89,9 @@ public class HospitalListFragment extends Fragment {
         cal.add(Calendar.DAY_OF_MONTH, 60);
         editEndDate.setText(sdf.format(cal.getTime()));
 
-        editStartDate.setOnClickListener(v -> showDatePicker(editStartDate));
-        editEndDate.setOnClickListener(v -> showDatePicker(editEndDate));
+        // 날짜 선택 시 자동 조회
+        editStartDate.setOnClickListener(v -> showDatePicker(editStartDate, true));
+        editEndDate.setOnClickListener(v -> showDatePicker(editEndDate, false));
 
         adapter = new HospitalListAdapter(getContext(), list, new HospitalListAdapter.OnItemClickListener() {
             @Override
@@ -111,8 +111,6 @@ public class HospitalListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 
-        btnSearch.setOnClickListener(v -> getList());
-
         btnAdd.setOnClickListener(v -> {
             HospitalAddBottomSheet sheet = HospitalAddBottomSheet.newAddInstance();
             sheet.setOnSavedListener(() -> getList());
@@ -123,7 +121,7 @@ public class HospitalListFragment extends Fragment {
         return root;
     }
 
-    private void showDatePicker(EditText target) {
+    private void showDatePicker(EditText target, boolean isStart) {
         Calendar cal = Calendar.getInstance();
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -134,6 +132,7 @@ public class HospitalListFragment extends Fragment {
                 (view, year, month, day) -> {
                     String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, day);
                     target.setText(date);
+                    getList(); // 날짜 선택 완료 시 자동 조회
                 },
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
@@ -181,6 +180,13 @@ public class HospitalListFragment extends Fragment {
 
                 act.runOnUiThread(() -> {
                     try {
+                        if (responseData.trim().startsWith("<")) {
+                            Log.e("HS HospitalList", "서버 HTML 오류 응답: " + responseData);
+                            Toast.makeText(getContext(), "서버 오류: " + responseData.substring(0, Math.min(responseData.length(), 100)), Toast.LENGTH_LONG).show();
+                            updateEmptyView();
+                            return;
+                        }
+
                         JSONObject json = new JSONObject(responseData);
                         JSONArray  jArr = json.getJSONArray("listSchedule");
                         list.clear();
@@ -198,7 +204,9 @@ public class HospitalListFragment extends Fragment {
                         if (adapter != null) adapter.notifyDataSetChanged();
                         updateEmptyView();
                     } catch (Exception e) {
+                        Log.e("HS HospitalList", "파싱 오류: " + e.getMessage() + " / 응답: " + responseData);
                         e.printStackTrace();
+                        updateEmptyView();
                     }
                 });
             }

@@ -2,7 +2,8 @@ package kr.windy.mariwoo.basic.ui.hospitalList;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import kr.windy.mariwoo.R;
+import kr.windy.mariwoo.basic.helper.HospitalAlarmHelper;
 
 import org.json.JSONObject;
 
@@ -156,7 +158,7 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });
 
-        // 시간 클릭 → TimePickerDialog
+        // 시간 클릭 → MaterialTimePicker (키보드 입력 모드)
         editTime.setOnClickListener(v -> {
             int hour = 9, minute = 0;
             try {
@@ -164,9 +166,20 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
                 hour   = Integer.parseInt(t[0]);
                 minute = Integer.parseInt(t[1]);
             } catch (Exception ignored) {}
-            new TimePickerDialog(requireContext(), (picker, h, m) ->
-                    editTime.setText(String.format(Locale.getDefault(), "%02d:%02d", h, m)),
-                    hour, minute, true).show();
+
+            MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                    .setInputMode(MaterialTimePicker.INPUT_MODE_KEYBOARD)
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(hour)
+                    .setMinute(minute)
+                    .setTitleText("시간 선택")
+                    .build();
+
+            picker.addOnPositiveButtonClickListener(btn ->
+                    editTime.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                            picker.getHour(), picker.getMinute())));
+
+            picker.show(getChildFragmentManager(), "time_picker");
         });
 
         btnSave.setOnClickListener(v -> save());
@@ -224,6 +237,28 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
                         if ("true".equals(json.getString("result"))) {
                             String msg = "modify".equals(mode) ? "수정되었습니다." : "등록되었습니다.";
                             Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+
+                            // scheduleNo 결정
+                            // 수정: 기존 no 사용
+                            // 등록: 서버 응답의 no 사용, 없으면 fullTime 해시로 대체
+                            long alarmNo;
+                            if ("modify".equals(mode)) {
+                                alarmNo = scheduleNo;
+                            } else {
+                                alarmNo = json.optLong("no", -1);
+                                if (alarmNo <= 0) {
+                                    // 서버가 no를 안 돌려줄 경우 fullTime 해시로 대체
+                                    alarmNo = (long)(fullTime.hashCode() & 0x7FFFFFFF);
+                                    Log.w("HospitalAdd", "서버에서 no 미반환 → fullTime 해시 사용: " + alarmNo);
+                                }
+                            }
+
+                            // 수정 시 기존 알람 취소 후 재등록
+                            if ("modify".equals(mode)) {
+                                HospitalAlarmHelper.cancelAlarm(act, alarmNo);
+                            }
+                            HospitalAlarmHelper.setAlarm(act, alarmNo, name, fullTime);
+
                             if (savedListener != null) savedListener.onSaved();
                             dismiss();
                         } else {

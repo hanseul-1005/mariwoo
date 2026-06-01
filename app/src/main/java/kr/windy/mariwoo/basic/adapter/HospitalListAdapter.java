@@ -59,7 +59,7 @@ public class HospitalListAdapter extends RecyclerView.Adapter<HospitalListAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         HospitalScheduleModel item = list.get(position);
         holder.tvName.setText(item.getName());
-        holder.tvTime.setText(item.getTime());
+        holder.tvTime.setText(formatTime(item.getTime()));
         holder.tvMemo.setText(item.getMemo());
 
         holder.btnModify.setOnClickListener(v -> {
@@ -68,6 +68,17 @@ public class HospitalListAdapter extends RecyclerView.Adapter<HospitalListAdapte
         holder.btnDelete.setOnClickListener(v -> {
             if (listener != null) listener.onDelete(item);
         });
+    }
+
+    /**
+     * "yyyy-MM-dd HH:mm:ss" → "yyyy.MM.dd\n    HH:mm"
+     */
+    private String formatTime(String time) {
+        if (time == null || !time.contains(" ")) return time;
+        String[] parts = time.split(" ");
+        String date = parts[0].replace("-", "."); // "yyyy.MM.dd"
+        String hhmm = parts[1].length() >= 5 ? parts[1].substring(0, 5) : parts[1];
+        return date + "\n" + hhmm;
     }
 
     @Override

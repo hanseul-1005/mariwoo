@@ -45,7 +45,7 @@
         <activity
             android:name=".basic.MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
+            android:label="@string/app_name"
             android:theme="@style/Theme.Mariwoo.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +67,7 @@
         <activity
             android:name=".basic.LoginActivity"
             android:exported="false" />
-        <!-- 알람 수신 BroadcastReceiver 등록 -->
+        <!-- 약 복용 알람 수신 BroadcastReceiver -->
         <receiver
             android:name=".basic.receiver.AlarmReceiver"
             android:exported="true">
@@ -75,6 +75,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <!-- 병원 스케줄 단일 알람 수신 BroadcastReceiver -->
+        <receiver
+            android:name=".basic.receiver.HospitalAlarmReceiver"
+            android:exported="false"/>
 
     </application>
 
