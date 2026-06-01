@@ -3,7 +3,6 @@ package kr.windy.mariwoo.basic.ui.hospitalList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,18 +13,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static android.app.Activity.RESULT_OK;
-
 import kr.windy.mariwoo.R;
-import kr.windy.mariwoo.basic.activity.HospitalAddActivity;
 import kr.windy.mariwoo.basic.adapter.HospitalListAdapter;
 import kr.windy.mariwoo.basic.model.HospitalScheduleModel;
 
@@ -50,9 +44,8 @@ import okhttp3.Response;
 /**
  * 병원 스케줄 목록 Fragment
  * - 날짜 범위 선택 후 조회
- * - 수정 → HospitalAddActivity (수정 모드)
+ * - 등록/수정 → HospitalAddBottomSheet (모달)
  * - 삭제 → 확인 다이얼로그 후 서버 삭제
- * - 등록 → HospitalAddActivity (등록 모드)
  */
 public class HospitalListFragment extends Fragment {
 
@@ -61,7 +54,7 @@ public class HospitalListFragment extends Fragment {
     private RecyclerView      recyclerView;
     private LinearLayout      layoutEmpty;
 
-    private HospitalListAdapter        adapter;
+    private HospitalListAdapter         adapter;
     private List<HospitalScheduleModel> list = new ArrayList<>();
 
     private SharedPreferences sharedPreferences;
@@ -103,15 +96,10 @@ public class HospitalListFragment extends Fragment {
         adapter = new HospitalListAdapter(getContext(), list, new HospitalListAdapter.OnItemClickListener() {
             @Override
             public void onModify(HospitalScheduleModel item) {
-                Activity act = getActivity();
-                if (act == null) return;
-                Intent intent = new Intent(act, HospitalAddActivity.class);
-                intent.putExtra("mode",  "modify");
-                intent.putExtra("no",    item.getNo());
-                intent.putExtra("name",  item.getName());
-                intent.putExtra("time",  item.getTime());
-                intent.putExtra("memo",  item.getMemo());
-                activityResultLauncher.launch(intent);
+                HospitalAddBottomSheet sheet = HospitalAddBottomSheet.newModifyInstance(
+                        item.getNo(), item.getName(), item.getTime(), item.getMemo());
+                sheet.setOnSavedListener(() -> getList());
+                sheet.show(getChildFragmentManager(), "hospital_modify");
             }
 
             @Override
@@ -124,25 +112,16 @@ public class HospitalListFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         btnSearch.setOnClickListener(v -> getList());
+
         btnAdd.setOnClickListener(v -> {
-            Activity act = getActivity();
-            if (act == null) return;
-            Intent intent = new Intent(act, HospitalAddActivity.class);
-            intent.putExtra("mode", "add");
-            activityResultLauncher.launch(intent);
+            HospitalAddBottomSheet sheet = HospitalAddBottomSheet.newAddInstance();
+            sheet.setOnSavedListener(() -> getList());
+            sheet.show(getChildFragmentManager(), "hospital_add");
         });
 
         getList();
         return root;
     }
-
-    // 등록/수정 후 돌아오면 목록 새로고침
-    ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) getList();
-            }
-    );
 
     private void showDatePicker(EditText target) {
         Calendar cal = Calendar.getInstance();
@@ -202,8 +181,8 @@ public class HospitalListFragment extends Fragment {
 
                 act.runOnUiThread(() -> {
                     try {
-                        JSONObject json   = new JSONObject(responseData);
-                        JSONArray  jArr   = json.getJSONArray("listSchedule");
+                        JSONObject json = new JSONObject(responseData);
+                        JSONArray  jArr = json.getJSONArray("listSchedule");
                         list.clear();
 
                         for (int i = 0; i < jArr.length(); i++) {
