@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 final String responseData = response.body().string();
 
                 runOnUiThread(() -> {
+                    if (isFinishing() || isDestroyed()) return;
                     try {
                         JSONObject json   = new JSONObject(responseData);
                         String     result = json.getString("result");

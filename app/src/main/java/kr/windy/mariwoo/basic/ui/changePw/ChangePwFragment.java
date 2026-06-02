@@ -89,15 +89,16 @@ public class ChangePwFragment extends Fragment {
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Activity act = getActivity();
+                if (act == null) return;
                 if ("".equals(editPw.getText().toString())) {
-                    Toast.makeText(getContext(), "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(act, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if ("".equals(editPwCheck.getText().toString())) {
-                    Toast.makeText(getContext(), "비밀번호 확인을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(act, "비밀번호 확인을 입력해주세요.", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // 비밀번호가 일치하는 경우에만 변경 요청
                 if (pwCheckResult) {
                     changePw();
                 }
@@ -187,6 +188,9 @@ public class ChangePwFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -214,9 +218,9 @@ public class ChangePwFragment extends Fragment {
                                 editor.putString("user_pw", pw);
                                 editor.apply();
 
-                                Toast.makeText(getContext(), "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(act, "비밀번호가 변경되었습니다.", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getContext(), "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(act, "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {
@@ -231,6 +235,11 @@ public class ChangePwFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
+        binding      = null;
+        editPw       = null;
+        editPwCheck  = null;
+        tvPwCheck    = null;
+        btnChange    = null;
     }
 }
+

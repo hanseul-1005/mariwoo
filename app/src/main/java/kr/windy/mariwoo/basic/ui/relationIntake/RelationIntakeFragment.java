@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
+import android.widget.EditText;
 import kr.windy.mariwoo.R;
 import kr.windy.mariwoo.basic.adapter.MedicineOuterAdapter;
 import kr.windy.mariwoo.basic.model.MedicineModel;
@@ -55,7 +55,7 @@ import okhttp3.Response;
 public class RelationIntakeFragment extends Fragment {
 
     private Spinner           spinnerTarget; // 가족(대상자) 선택 스피너
-    private TextInputEditText editDate;      // 날짜 입력 필드
+    private EditText editDate;      // 날짜 입력 필드
     private AppCompatButton   btnSelect;     // 조회 버튼
     private RecyclerView      rvOuter;       // 약 목록 RecyclerView
     private LinearLayout      layoutEmpty;
@@ -156,8 +156,12 @@ public class RelationIntakeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        rvOuter     = null;
-        layoutEmpty = null;
+        rvOuter       = null;
+        layoutEmpty   = null;
+        outerAdapter  = null;
+        spinnerTarget = null;
+        editDate      = null;
+        btnSelect     = null;
     }
 
     /**
@@ -198,6 +202,9 @@ public class RelationIntakeFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -225,7 +232,7 @@ public class RelationIntakeFragment extends Fragment {
                     if (uiAct == null || uiAct.isFinishing()) return;
                     uiAct.runOnUiThread(() -> {
                         if (familyNames.isEmpty()) {
-                            Toast.makeText(getContext(), "등록된 가족이 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(uiAct, "등록된 가족이 없습니다.", Toast.LENGTH_SHORT).show();
                             updateEmptyView();
                             return;
                         }
@@ -235,6 +242,7 @@ public class RelationIntakeFragment extends Fragment {
                                 android.R.layout.simple_spinner_item,
                                 familyNames);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        if (spinnerTarget == null) return;
                         spinnerTarget.setAdapter(adapter);
 
                         // 가족 목록이 있으면 첫 번째 가족의 복용 내역 자동 조회
@@ -255,11 +263,12 @@ public class RelationIntakeFragment extends Fragment {
      */
     private void getIntakeList() {
         if (familyNos.isEmpty()) {
-            Toast.makeText(getContext(), "가족을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "가족을 선택해주세요.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 스피너 선택 인덱스 범위 체크 (IndexOutOfBoundsException 방지)
+        // 스피너 null 및 선택 인덱스 범위 체크
+        if (spinnerTarget == null) return;
         int selectedIndex = spinnerTarget.getSelectedItemPosition();
         if (selectedIndex < 0 || selectedIndex >= familyNos.size()) return;
 
@@ -285,6 +294,9 @@ public class RelationIntakeFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -329,11 +341,11 @@ public class RelationIntakeFragment extends Fragment {
                     uiAct.runOnUiThread(() -> {
                         listMedicine.clear();
                         listMedicine.addAll(tempList);
-                        outerAdapter.notifyDataSetChanged();
+                        if (outerAdapter != null) outerAdapter.notifyDataSetChanged();
                         updateEmptyView();
 
                         if (listMedicine.isEmpty()) {
-                            Toast.makeText(getContext(), "복약 내역이 없습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(uiAct, "복약 내역이 없습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -344,3 +356,4 @@ public class RelationIntakeFragment extends Fragment {
         });
     }
 }
+

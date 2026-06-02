@@ -68,7 +68,8 @@ public class RelationListFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private String userNo    = "";
     private String serverUrl = "";
-    private String type      = "열람자"; // 현재 선택된 관계 유형 (기본값)
+    private String  type       = "열람자"; // 현재 선택된 관계 유형 (기본값)
+    private boolean isLoading  = false;   // 중복 요청 방지
 
     // 싱글톤 OkHttpClient
     private final OkHttpClient client = new OkHttpClient();
@@ -168,6 +169,8 @@ public class RelationListFragment extends Fragment {
      * 현재 선택된 type(열람자/대상자/신청자)에 해당하는 관계 목록 요청
      */
     private void getList() {
+        if (isLoading) return;
+        isLoading = true;
         Log.i("HS RelationListFragment", "get list");
 
         RequestBody formBody = new FormBody.Builder()
@@ -187,10 +190,14 @@ public class RelationListFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+                isLoading = false;
                 // body 읽기는 백그라운드에서 처리
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
@@ -267,6 +274,9 @@ public class RelationListFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -310,8 +320,11 @@ public class RelationListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
-        rvOuter = null;
-        layoutEmpty = null;
+        binding      = null;
+        rvOuter      = null;
+        layoutEmpty  = null;
+        outerAdapter = null;
+        spinnerType  = null;
+        btnAdd       = null;
     }
 }

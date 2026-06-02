@@ -339,6 +339,12 @@ public class MedicineAddActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show();
 
                             String medicineNo = json.optString("medicine_no", "");
+                            if (medicineNo.isEmpty()) {
+                                Log.e("MedicineAddActivity", "medicine_no 누락 - 알람 등록 건너뜀");
+                                setResult(RESULT_OK);
+                                finish();
+                                return;
+                            }
 
                             // 알람 설정 전 권한 체크
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

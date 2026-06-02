@@ -150,6 +150,7 @@ public class HospitalListFragment extends Fragment {
     }
 
     private void getList() {
+        if (editStartDate == null || editEndDate == null) return;
         String startAt = editStartDate.getText().toString();
         String endAt   = editEndDate.getText().toString();
 
@@ -182,13 +183,14 @@ public class HospitalListFragment extends Fragment {
                     try {
                         if (responseData.trim().startsWith("<")) {
                             Log.e("HS HospitalList", "서버 HTML 오류 응답: " + responseData);
-                            Toast.makeText(getContext(), "서버 오류: " + responseData.substring(0, Math.min(responseData.length(), 100)), Toast.LENGTH_LONG).show();
+                            Toast.makeText(act, "서버 오류: " + responseData.substring(0, Math.min(responseData.length(), 100)), Toast.LENGTH_LONG).show();
                             updateEmptyView();
                             return;
                         }
 
                         JSONObject json = new JSONObject(responseData);
-                        JSONArray  jArr = json.getJSONArray("listSchedule");
+                        JSONArray  jArr = json.optJSONArray("listSchedule");
+                        if (jArr == null) { updateEmptyView(); return; }
                         list.clear();
 
                         for (int i = 0; i < jArr.length(); i++) {
@@ -226,7 +228,12 @@ public class HospitalListFragment extends Fragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) { e.printStackTrace(); }
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Activity act = getActivity();
+                if (act != null) act.runOnUiThread(() ->
+                    Toast.makeText(act, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -240,9 +247,11 @@ public class HospitalListFragment extends Fragment {
                     try {
                         JSONObject json = new JSONObject(responseData);
                         if ("true".equals(json.getString("result"))) {
+                            // 알람도 함께 취소
+                            HospitalAlarmHelper.cancelAlarm(act, item.getNo());
                             getList();
                         } else {
-                            Toast.makeText(getContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(act, "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -262,8 +271,12 @@ public class HospitalListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        recyclerView = null;
-        layoutEmpty  = null;
-        adapter      = null;
+        recyclerView  = null;
+        layoutEmpty   = null;
+        adapter       = null;
+        editStartDate = null;
+        editEndDate   = null;
+        btnAdd        = null;
     }
 }
+

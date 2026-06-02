@@ -61,7 +61,7 @@ public class MedicineCardAdapter extends RecyclerView.Adapter<MedicineCardAdapte
 
     @Override
     public int getItemCount() {
-        return cards.size();
+        return cards == null ? 0 : cards.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

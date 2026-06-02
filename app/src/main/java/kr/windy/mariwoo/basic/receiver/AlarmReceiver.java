@@ -104,7 +104,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         // 알림 표시 텍스트 (여러 약이면 쉼표로 나열)
-        String notifBody = timeTypeName + " - " + notifText.toString();
+        String notifBody = (timeTypeName != null ? timeTypeName : "") + " - " + notifText.toString();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_medicine)
@@ -119,9 +119,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         manager.notify((int) (System.currentTimeMillis() & 0x7FFFFFFF), builder.build());
 
-        // 다음 주 동일 슬롯으로 알람 재등록 (약 목록은 SharedPreferences에서 그대로 유지)
-        if (slotKey != null && weekday != null && time != null) {
+        // 다음 주 동일 슬롯으로 알람 재등록 (weekday, time이 null이면 재등록 불가)
+        if (weekday != null && time != null) {
             AlarmHelper.reRegisterAlarm(context, slotKey, weekday, timeTypeIndex, time);
+        } else {
+            Log.w("AlarmReceiver", "재등록 불가 - weekday 또는 time 누락: weekday=" + weekday + ", time=" + time);
         }
     }
 }

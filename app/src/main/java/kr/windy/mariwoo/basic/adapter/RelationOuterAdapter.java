@@ -126,6 +126,7 @@ public class RelationOuterAdapter extends RecyclerView.Adapter<RelationOuterAdap
 
     @Override
     public int getItemCount() {
-        return listRelation.size();
+        return listRelation == null ? 0 : listRelation.size();
     }
 }
+

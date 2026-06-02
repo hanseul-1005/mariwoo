@@ -221,7 +221,12 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
 
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) { e.printStackTrace(); }
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
+            }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -236,7 +241,7 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
                         JSONObject json = new JSONObject(responseData);
                         if ("true".equals(json.getString("result"))) {
                             String msg = "modify".equals(mode) ? "수정되었습니다." : "등록되었습니다.";
-                            Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(act, msg, Toast.LENGTH_SHORT).show();
 
                             // scheduleNo 결정
                             // 수정: 기존 no 사용
@@ -260,9 +265,9 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
                             HospitalAlarmHelper.setAlarm(act, alarmNo, name, fullTime);
 
                             if (savedListener != null) savedListener.onSaved();
-                            dismiss();
+                            if (isAdded()) dismiss();
                         } else {
-                            Toast.makeText(getContext(), "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(act, "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -272,3 +277,4 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
         });
     }
 }
+

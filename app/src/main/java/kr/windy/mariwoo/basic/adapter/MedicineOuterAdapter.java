@@ -81,8 +81,7 @@ public class MedicineOuterAdapter extends RecyclerView.Adapter<MedicineOuterAdap
     }
 
     @Override
-    public int getItemCount() {
-        return list.size();
+    public int getItemCount() { return list == null ? 0 : list.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -96,3 +95,4 @@ public class MedicineOuterAdapter extends RecyclerView.Adapter<MedicineOuterAdap
         }
     }
 }
+

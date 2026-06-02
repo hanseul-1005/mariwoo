@@ -52,10 +52,10 @@ public class RelationAddActivity extends AppCompatActivity {
     private Button   btnCancel; // 취소 버튼
 
     private SharedPreferences sharedPreferences;
-    private String userNo    = ""; // 내 user_no (SharedPreferences에서 로드)
-    private String serverUrl = "";
+    private String  userNo      = "";
+    private String  serverUrl   = "";
+    private boolean isRequesting = false; // 중복 요청 방지
 
-    // 싱글톤 OkHttpClient (매 요청마다 생성 방지)
     private final OkHttpClient client = new OkHttpClient();
 
     @Override
@@ -124,6 +124,7 @@ public class RelationAddActivity extends AppCompatActivity {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isRequesting) return; // 중복 클릭 방지
                 reqRelation();
             }
         });
@@ -164,14 +165,19 @@ public class RelationAddActivity extends AppCompatActivity {
 
         Log.i("HS RelationAddActivity", "request : " + request.toString());
 
+        isRequesting = true;
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                isRequesting = false;
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                        "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
             }
 
             @Override
             public void onResponse(Call call, final Response response) throws IOException {
+                isRequesting = false;
                 if (response.body() == null) return;
                 final String responseData = response.body().string();
 

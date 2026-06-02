@@ -65,9 +65,9 @@
 
     <!-- 레이아웃 -->
     <style name="main_layout">
-        <item name="android:paddingLeft">30dp</item>
-        <item name="android:paddingRight">30dp</item>
-        <item name="android:paddingBottom">20dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingBottom">15dp</item>
         <item name="android:background">@color/base_background</item>
     </style>
 

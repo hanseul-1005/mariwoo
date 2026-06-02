@@ -136,6 +136,8 @@ public class MedicineModifyActivity extends AppCompatActivity {
         // MedicineListFragment에서 전달된 Intent 데이터 수신
         medicineNo   = getIntent().getStringExtra("medicine_no");
         medicineName = getIntent().getStringExtra("medicine_name");
+        if (medicineName == null) medicineName = "";
+        if (medicineNo  == null) medicineNo   = "";
         weekday      = getIntent().getIntExtra("weekday", 0);
 
         // 약 이름 표시 (수정 불가)
@@ -322,8 +324,10 @@ public class MedicineModifyActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(getApplicationContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
             }
 
             @Override

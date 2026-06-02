@@ -68,7 +68,9 @@ public class MedicineIntakeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_medicine_intake, container, false);
 
         serverUrl = getString(R.string.server_medicine);
-        sharedPreferences = requireActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return view;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
         // View 초기화
@@ -145,6 +147,9 @@ public class MedicineIntakeFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -153,6 +158,11 @@ public class MedicineIntakeFragment extends Fragment {
                     if (response.body() == null) return;
                     String    responseData = response.body().string();
                     Log.i("HS", "intake list 응답: " + responseData);
+
+                    if (responseData.trim().startsWith("<")) {
+                        Log.e("HS", "서버 오류 응답 (HTML): " + responseData.substring(0, Math.min(responseData.length(), 100)));
+                        return;
+                    }
 
                     // 응답: JSONArray 형태 [{medicine_name, schedules:[...]}, ...]
                     JSONArray              jsonArray = new JSONArray(responseData);
@@ -222,6 +232,9 @@ public class MedicineIntakeFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override

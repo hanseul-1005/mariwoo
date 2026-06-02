@@ -385,8 +385,9 @@ public class SignActivity extends AppCompatActivity {
                 .build();
 
         picker.addOnPositiveButtonClickListener(selection -> {
-            SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
-            String           birth = sdf.format(new Date(selection));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
+            sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC")); // UTC 기준 파싱 (날짜 오차 방지)
+            String birth = sdf.format(new Date(selection));
             editBirth.setText(birth);
         });
 
@@ -422,6 +423,8 @@ public class SignActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                        "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -503,6 +506,8 @@ public class SignActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(),
+                        "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
             }
 
             @Override

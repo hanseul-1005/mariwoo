@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * 약 복용 알람 Activity
  *
  * 역할:
- *   - AlarmReceiver → AlarmService → 이 Activity 순서로 실행됨
+ *   - AlarmReceiver → 이 Activity 순서로 직접 실행됨
  *   - 잠금 화면 위에 전체 화면으로 표시 (WakeLock + FLAG_SHOW_WHEN_LOCKED)
  *   - 약 이름, 복용 시간대(아침/점심 등), 식전/식후 정보 표시
  *   - "확인" 버튼 클릭 → 모든 알림 취소 후 LoginActivity로 이동
@@ -85,7 +85,7 @@ public class AlarmActivity extends AppCompatActivity {
      * Intent에서 알람 정보를 꺼내 UI에 표시
      * "확인" 버튼 클릭 시 모든 알림을 취소하고 LoginActivity로 이동
      *
-     * @param intent AlarmService에서 전달받은 Intent
+     * @param intent AlarmReceiver에서 전달받은 Intent
      */
     private void handleIntent(Intent intent) {
         if (intent == null) {
@@ -99,6 +99,12 @@ public class AlarmActivity extends AppCompatActivity {
 
         Log.d("AlarmActivity", "시간대: " + timeType + " / 약 수: "
                 + (medicineNames != null ? medicineNames.size() : 0));
+
+        if (medicineNames == null || medicineNames.isEmpty()) {
+            Log.w("AlarmActivity", "약 목록 없음 - 알람 화면 닫기");
+            finish();
+            return;
+        }
 
         // UI 표시
         TextView         tvTitle    = findViewById(R.id.alarmActivity_text_title);

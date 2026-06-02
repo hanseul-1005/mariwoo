@@ -170,6 +170,7 @@ public class MedicineListFragment extends Fragment {
     private void getList() {
         Log.i("HS MedicineListFragment", "get list");
 
+        if (spinnerWeekday == null) return;
         int weekDay = spinnerWeekday.getSelectedItemPosition(); // 0:월 ~ 6:일
 
         RequestBody formBody = new FormBody.Builder()
@@ -189,6 +190,9 @@ public class MedicineListFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -275,8 +279,11 @@ public class MedicineListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding     = null;
-        rvOuter     = null;
-        layoutEmpty = null;
+        binding        = null;
+        rvOuter        = null;
+        layoutEmpty    = null;
+        outerAdapter   = null;
+        spinnerWeekday = null;
+        btnAdd         = null;
     }
 }

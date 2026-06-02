@@ -287,6 +287,9 @@ public class ChangeInfoFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -306,7 +309,7 @@ public class ChangeInfoFragment extends Fragment {
 
                             // 서버가 HTML 에러 페이지를 반환한 경우
                             if (responseData.trim().startsWith("<")) {
-                                Toast.makeText(getContext(), "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(act, "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -322,9 +325,9 @@ public class ChangeInfoFragment extends Fragment {
                                 editor.putString("user_birth", userBirth);
                                 editor.apply();
 
-                                Toast.makeText(getContext(), "내 정보가 변경되었습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(act, "내 정보가 변경되었습니다.", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getContext(), "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(act, "다시 시도해주세요.", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (Exception e) {
@@ -339,7 +342,13 @@ public class ChangeInfoFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // ViewBinding 참조 해제 (메모리 누수 방지)
+        binding           = null;
+        editTel           = null;
+        editEmail         = null;
+        editAddr          = null;
+        layoutEmailDirect = null;
+        editAddrDirect    = null;
+        editBirth         = null;
     }
 
     /**
@@ -388,3 +397,4 @@ public class ChangeInfoFragment extends Fragment {
         picker.show(getChildFragmentManager(), "birth_picker");
     }
 }
+

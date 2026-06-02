@@ -76,6 +76,9 @@ public class MedicineScheduleAdapter extends RecyclerView.Adapter<MedicineSchedu
             case "취침 전":
                 holder.imgTimeType.setImageResource(R.drawable.bed);
                 break;
+            default:
+                holder.imgTimeType.setImageResource(R.drawable.icon_medicine);
+                break;
         }
 
         // 시간대 텍스트 (아침/점심/저녁/취침 전)
@@ -107,7 +110,8 @@ public class MedicineScheduleAdapter extends RecyclerView.Adapter<MedicineSchedu
                         .setPositiveButton("네", (dialog, which) -> {
                             // getAdapterPosition()으로 최신 위치 사용 (stale position 방지)
                             int adapterPos = holder.getAdapterPosition();
-                            if (adapterPos != androidx.recyclerview.widget.RecyclerView.NO_ID) {
+                            if (adapterPos != androidx.recyclerview.widget.RecyclerView.NO_POSITION
+                                    && listener != null) {
                                 listener.onCheckClick(item, adapterPos);
                             }
                         })
@@ -119,7 +123,7 @@ public class MedicineScheduleAdapter extends RecyclerView.Adapter<MedicineSchedu
 
     @Override
     public int getItemCount() {
-        return schedules.size();
+        return schedules == null ? 0 : schedules.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

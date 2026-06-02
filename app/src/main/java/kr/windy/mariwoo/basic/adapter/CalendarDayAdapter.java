@@ -110,7 +110,7 @@ public class CalendarDayAdapter extends RecyclerView.Adapter<CalendarDayAdapter.
 
     @Override
     public int getItemCount() {
-        return dayList.size();
+        return dayList == null ? 0 : dayList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

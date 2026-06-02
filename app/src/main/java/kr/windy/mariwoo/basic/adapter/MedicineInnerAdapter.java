@@ -80,6 +80,10 @@ public class MedicineInnerAdapter extends RecyclerView.Adapter<MedicineInnerAdap
                 holder.imgIcon.setImageResource(R.drawable.bed);
                 holder.txtType.setText("취침 전");
                 break;
+            default:
+                holder.imgIcon.setImageResource(R.drawable.icon_medicine);
+                holder.txtType.setText(item.getType());
+                break;
         }
 
         holder.txtTime.setText(item.getTime());

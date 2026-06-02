@@ -13,8 +13,6 @@ import kr.windy.mariwoo.basic.MainActivity;
 
 import androidx.core.app.NotificationCompat;
 
-import kr.windy.mariwoo.R;
-
 /**
  * 병원 스케줄 단일 알람 수신 BroadcastReceiver
  * - 방문 1시간 전 알림
@@ -27,6 +25,7 @@ public class HospitalAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String name    = intent.getStringExtra("hospital_name");
+        if (name == null) name = "병원";
         String time    = intent.getStringExtra("hospital_time");
         String label   = intent.getStringExtra("hospital_label"); // "24시간" or "1시간"
         int    reqCode = intent.getIntExtra("request_code", 0);

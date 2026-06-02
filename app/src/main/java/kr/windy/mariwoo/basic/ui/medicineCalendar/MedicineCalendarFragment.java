@@ -68,7 +68,9 @@ public class MedicineCalendarFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_medicine_calendar, container, false);
 
         serverUrl = getString(R.string.server_medicine);
-        sharedPreferences = requireActivity().getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
+        Activity activity = getActivity();
+        if (activity == null) return view;
+        sharedPreferences = activity.getSharedPreferences("autoLogin", Activity.MODE_PRIVATE);
         userNo = sharedPreferences.getString("user_no", "-1");
 
         // View 초기화
@@ -129,8 +131,8 @@ public class MedicineCalendarFragment extends Fragment {
         Activity act = getActivity();
         if (act != null && !act.isFinishing()) {
             act.runOnUiThread(() -> {
-                tvYearMonth.setText(year + "년 " + month + "월");
-                tvMonth.setText(month + "월");
+                if (tvYearMonth != null) tvYearMonth.setText(year + "년 " + month + "월");
+                if (tvMonth     != null) tvMonth.setText(month + "월");
             });
         }
 
@@ -154,6 +156,9 @@ public class MedicineCalendarFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+                Activity _fa = getActivity();
+                if (_fa != null) _fa.runOnUiThread(() ->
+                    android.widget.Toast.makeText(_fa, "네트워크 오류가 발생했습니다.", android.widget.Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -179,11 +184,26 @@ public class MedicineCalendarFragment extends Fragment {
                     // 달력 어댑터 데이터 갱신 (메인 스레드)
                     Activity uiAct = getActivity();
                     if (uiAct == null || uiAct.isFinishing()) return;
-                    uiAct.runOnUiThread(() ->
-                            calendarDayAdapter.updateData(dayList, statusMap, year, month));
+                    uiAct.runOnUiThread(() -> {
+                        if (calendarDayAdapter != null)
+                            calendarDayAdapter.updateData(dayList, statusMap, year, month);
+                    });
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    // 파싱 실패 시 빈 상태로 달력 표시
+                    Activity errAct = getActivity();
+                    if (errAct != null && !errAct.isFinishing()) {
+                        List<Integer> dayList2 = buildDayList(
+                                currentCalendar.get(Calendar.YEAR),
+                                currentCalendar.get(Calendar.MONTH) + 1);
+                        errAct.runOnUiThread(() -> {
+                            if (calendarDayAdapter != null)
+                                calendarDayAdapter.updateData(dayList2, new java.util.HashMap<>(),
+                                        currentCalendar.get(Calendar.YEAR),
+                                        currentCalendar.get(Calendar.MONTH) + 1);
+                        });
+                    }
                 }
             }
         });

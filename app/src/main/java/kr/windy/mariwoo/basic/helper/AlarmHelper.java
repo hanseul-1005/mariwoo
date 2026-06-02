@@ -101,8 +101,14 @@ public class AlarmHelper {
             Log.e("AlarmHelper", "잘못된 time 형식: " + time);
             return;
         }
-        int hour   = Integer.parseInt(timeParts[0]);
-        int minute = Integer.parseInt(timeParts[1]);
+        int hour, minute;
+        try {
+            hour   = Integer.parseInt(timeParts[0].trim());
+            minute = Integer.parseInt(timeParts[1].trim());
+        } catch (NumberFormatException e) {
+            Log.e("AlarmHelper", "time 파싱 실패: " + time);
+            return;
+        }
 
         String[] days = weekday.split(",");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -151,8 +157,14 @@ public class AlarmHelper {
             Log.e("AlarmHelper", "reRegisterAlarm - 잘못된 time 형식: " + time);
             return;
         }
-        int hour   = Integer.parseInt(timeParts[0]);
-        int minute = Integer.parseInt(timeParts[1]);
+        int hour, minute;
+        try {
+            hour   = Integer.parseInt(timeParts[0].trim());
+            minute = Integer.parseInt(timeParts[1].trim());
+        } catch (NumberFormatException e) {
+            Log.e("AlarmHelper", "reRegisterAlarm - time 파싱 실패: " + time);
+            return;
+        }
 
         int dayIndex;
         try {
@@ -231,8 +243,10 @@ public class AlarmHelper {
             String key = mapEntry.getKey();
             if (!key.startsWith(keyPrefix)) continue;
 
+            Object val = mapEntry.getValue();
+            if (!(val instanceof Set)) continue;
             //noinspection unchecked
-            Set<String> medicines = new HashSet<>((Set<String>) mapEntry.getValue());
+            Set<String> medicines = new HashSet<>((Set<String>) val);
             boolean changed = medicines.removeIf(e -> e.startsWith(medicineNo + DIVIDER));
             if (!changed) continue;
 
@@ -264,8 +278,10 @@ public class AlarmHelper {
             String key = mapEntry.getKey();
             if (!key.startsWith("slot_")) continue;
 
+            Object val = mapEntry.getValue();
+            if (!(val instanceof Set)) continue;
             //noinspection unchecked
-            Set<String> medicines = new HashSet<>((Set<String>) mapEntry.getValue());
+            Set<String> medicines = new HashSet<>((Set<String>) val);
             boolean changed = medicines.removeIf(e -> e.startsWith(medicineNo + DIVIDER));
             if (!changed) continue;
 
