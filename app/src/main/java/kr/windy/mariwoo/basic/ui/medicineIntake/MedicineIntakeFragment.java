@@ -107,8 +107,10 @@ public class MedicineIntakeFragment extends Fragment {
      * 선택한 날짜로 selectedDate 및 tvDate 업데이트
      */
     private void showDatePicker() {
+        Activity act = getActivity();
+        if (act == null) return;
         Calendar cal = Calendar.getInstance();
-        new DatePickerDialog(requireContext(),
+        new DatePickerDialog(act,
                 (view, year, month, dayOfMonth) -> {
                     Calendar selected = Calendar.getInstance();
                     selected.set(year, month, dayOfMonth);

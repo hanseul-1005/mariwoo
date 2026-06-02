@@ -58,10 +58,10 @@ public class AlarmActivity extends AppCompatActivity {
             );
         }
 
-        // WakeLock 획득: 화면을 최대 10분간 켜둠 (알람 확인을 위해)
+        // WakeLock 획득: 화면 켜기 (SCREEN_BRIGHT_WAKE_LOCK deprecated → FULL_WAKE_LOCK 사용)
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
                 "mariwoo:AlarmWakeLock"
         );
         wakeLock.acquire(10 * 60 * 1000L); // 최대 10분 유지

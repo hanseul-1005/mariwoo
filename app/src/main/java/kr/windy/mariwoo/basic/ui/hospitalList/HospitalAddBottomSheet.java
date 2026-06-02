@@ -148,12 +148,14 @@ public class HospitalAddBottomSheet extends BottomSheetDialogFragment {
 
         // 날짜 클릭 → DatePickerDialog
         editDate.setOnClickListener(v -> {
+            Activity dateAct = getActivity();
+            if (dateAct == null) return;
             Calendar cal = Calendar.getInstance();
             try {
                 cal.setTime(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                         .parse(editDate.getText().toString()));
             } catch (Exception ignored) {}
-            new DatePickerDialog(requireContext(), (picker, year, month, day) ->
+            new DatePickerDialog(dateAct, (picker, year, month, day) ->
                     editDate.setText(String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, day)),
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
         });

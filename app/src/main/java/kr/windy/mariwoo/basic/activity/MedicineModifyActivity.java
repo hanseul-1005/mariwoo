@@ -230,8 +230,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
                 final String responseData = response.body().string();
                 Log.i("HS", "deleteMedicine 응답 : " + responseData);
 
-                // 빈 응답 방어 처리
-                if (responseData == null || responseData.trim().isEmpty()) {
+                if (responseData.trim().isEmpty()) {
                     Log.e("HS", "deleteMedicine: 서버 응답이 비어있음");
                     runOnUiThread(() -> Toast.makeText(getApplicationContext(), "서버 오류가 발생했습니다.", Toast.LENGTH_SHORT).show());
                     return;
@@ -260,8 +259,7 @@ public class MedicineModifyActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // 뒤로가기 시 RESULT_OK 반환 → 목록 새로고침
-        setResult(RESULT_OK);
+        setResult(RESULT_CANCELED);
         super.onBackPressed();
     }
 

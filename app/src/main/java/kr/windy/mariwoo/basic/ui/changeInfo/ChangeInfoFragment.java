@@ -370,7 +370,10 @@ public class ChangeInfoFragment extends Fragment {
         long openAt = endDate;
         try {
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            openAt = sdf.parse(userBirth).getTime();
+            if (userBirth != null && !userBirth.isEmpty()) {
+                java.util.Date parsed = sdf.parse(userBirth);
+                if (parsed != null) openAt = parsed.getTime();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

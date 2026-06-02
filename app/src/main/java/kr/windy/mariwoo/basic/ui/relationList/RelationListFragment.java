@@ -189,6 +189,7 @@ public class RelationListFragment extends Fragment {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                isLoading = false;
                 e.printStackTrace();
                 Activity _fa = getActivity();
                 if (_fa != null) _fa.runOnUiThread(() ->

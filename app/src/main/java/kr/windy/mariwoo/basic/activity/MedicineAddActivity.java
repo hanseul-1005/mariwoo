@@ -153,7 +153,7 @@ public class MedicineAddActivity extends AppCompatActivity {
         // 뒤로가기
         imgBack = findViewById(R.id.medicineAddActivity_imageView_back);
         imgBack.setOnClickListener(v -> {
-            setResult(RESULT_OK);
+            setResult(RESULT_CANCELED);
             finish();
         });
         // fullScreenIntent 권한은 checkExactAlarmPermission()에서 통합 처리
@@ -161,7 +161,7 @@ public class MedicineAddActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_OK);
+        setResult(RESULT_CANCELED);
         super.onBackPressed();
     }
 

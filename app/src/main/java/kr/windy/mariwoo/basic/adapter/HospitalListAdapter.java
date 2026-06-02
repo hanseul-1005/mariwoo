@@ -112,7 +112,8 @@ public class HospitalListAdapter extends RecyclerView.Adapter<HospitalListAdapte
             int month     = cal.get(Calendar.MONTH) + 1;
             int day       = cal.get(Calendar.DAY_OF_MONTH);
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            return String.format(Locale.getDefault(), "%02d.%02d (%s)", month, day, DAY_NAMES[dayOfWeek - 1]);
+            int idx = Math.max(0, Math.min(dayOfWeek - 1, DAY_NAMES.length - 1));
+            return String.format(Locale.getDefault(), "%02d.%02d (%s)", month, day, DAY_NAMES[idx]);
         } catch (Exception e) {
             return dateStr;
         }
